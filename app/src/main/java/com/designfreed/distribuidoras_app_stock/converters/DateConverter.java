@@ -20,18 +20,6 @@ public class DateConverter {
     }
 
     public Date longToDate(Long fecha) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-
-        String newFechaString = formatter.format(new Date(fecha));
-
-        Date newFecha = null;
-
-        try {
-            newFecha = formatter.parse(newFechaString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return newFecha;
+        return new Date(fecha);
     }
 }
