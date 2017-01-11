@@ -6,6 +6,7 @@ import android.content.Context;
 import com.designfreed.distribuidoras_app_stock.domain.HojaRuta;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -25,11 +26,15 @@ public class HojaRutaLoader extends AsyncTaskLoader<List<HojaRuta>> {
             return null;
         }
 
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 
-        HojaRuta[] hojas = restTemplate.getForObject(url, HojaRuta[].class);
+            HojaRuta[] hojas = restTemplate.getForObject(url, HojaRuta[].class);
 
-        return Arrays.asList(hojas);
+            return Arrays.asList(hojas);
+        } catch (ResourceAccessException connectException) {
+            return null;
+        }
     }
 }

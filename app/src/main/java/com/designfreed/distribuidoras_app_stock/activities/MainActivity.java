@@ -19,7 +19,6 @@ import com.designfreed.distribuidoras_app_stock.converters.DateConverter;
 import com.designfreed.distribuidoras_app_stock.domain.HojaRuta;
 import com.designfreed.distribuidoras_app_stock.loaders.HojaRutaLoader;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
