@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimary">#0067AC</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#0067AC</color>
+
+    <color name="estado0">#E86262</color>
+    <color name="estado1">#73BE64</color>
+
+    <color name="chofer">#0067AC</color>
 </resources>
