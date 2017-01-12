@@ -1,9 +1,7 @@
 package com.designfreed.distribuidoras_app_stock.activities;
 
 import android.app.FragmentTransaction;
-import android.app.LoaderManager;
 import android.content.Context;
-import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -25,7 +23,6 @@ import com.designfreed.distribuidoras_app_stock.domain.Envase;
 import com.designfreed.distribuidoras_app_stock.domain.EstadoEnvase;
 import com.designfreed.distribuidoras_app_stock.domain.ItemMovimientoStock;
 import com.designfreed.distribuidoras_app_stock.domain.MovimientoStock;
-import com.designfreed.distribuidoras_app_stock.loaders.EnvaseLoader;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -213,7 +210,9 @@ public class CompraActivity extends AppCompatActivity {
             super.onPostExecute(aBoolean);
 
             if (aBoolean) {
-                Toast.makeText(getApplicationContext(), "Ingresado", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Ingreso satisfactorio", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Ingreso fallido", Toast.LENGTH_SHORT).show();
             }
 
             txtFecha.setText("");

@@ -1,7 +1,6 @@
 package com.designfreed.distribuidoras_app_stock.adapters;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +12,7 @@ import com.designfreed.distribuidoras_app_stock.R;
 import com.designfreed.distribuidoras_app_stock.domain.ItemMovimientoStock;
 import com.designfreed.distribuidoras_app_stock.utils.Utils;
 
-import java.text.NumberFormat;
 import java.util.List;
-import java.util.Locale;
 
 public class CompraAdapter extends ArrayAdapter<ItemMovimientoStock> {
     public CompraAdapter(Context context, List<ItemMovimientoStock> objects) {
