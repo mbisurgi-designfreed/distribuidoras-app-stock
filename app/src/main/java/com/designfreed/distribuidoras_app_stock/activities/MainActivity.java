@@ -2,6 +2,7 @@ package com.designfreed.distribuidoras_app_stock.activities;
 
 import android.app.LoaderManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -47,7 +48,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HojaRuta hoja = (HojaRuta) parent.getItemAtPosition(position);
 
-
+                Intent intent = new Intent(getApplicationContext(), CompraActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -66,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public Loader<List<HojaRuta>> onCreateLoader(int id, Bundle args) {
         Long fecha = new DateConverter().dateToLong(new Date());
 
-        String url = "http://localhost:8080/distribuidoras-backend/hojaRuta/findByFecha/" + fecha;
+        String url = "http://192.168.0.9:8080/distribuidoras-backend/hojaRuta/findByFecha/" + fecha;
 
         return new HojaRutaLoader(this, url);
     }

@@ -21,7 +21,7 @@
             android:inputType="date" />
 
         <EditText
-            android:id="@+id/nro_remito"
+            android:id="@+id/nro_comprobante"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Nro de remito"
@@ -33,7 +33,7 @@
             android:orientation="horizontal">
 
             <Spinner
-                android:id="@+id/articulo"
+                android:id="@+id/articulos"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
@@ -58,7 +58,7 @@
                 android:inputType="numberDecimal" />
 
             <Button
-                android:id="@+id/agregar"
+                android:id="@+id/add"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
@@ -75,6 +75,7 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/ingresar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
