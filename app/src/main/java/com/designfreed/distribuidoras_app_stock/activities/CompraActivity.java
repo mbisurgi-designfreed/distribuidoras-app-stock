@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,18 +15,29 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.designfreed.distribuidoras_app_stock.R;
 import com.designfreed.distribuidoras_app_stock.adapters.CompraAdapter;
+import com.designfreed.distribuidoras_app_stock.converters.DateConverter;
 import com.designfreed.distribuidoras_app_stock.dialogs.DateDialog;
 import com.designfreed.distribuidoras_app_stock.domain.Envase;
+import com.designfreed.distribuidoras_app_stock.domain.EstadoEnvase;
 import com.designfreed.distribuidoras_app_stock.domain.ItemMovimientoStock;
+import com.designfreed.distribuidoras_app_stock.domain.MovimientoStock;
 import com.designfreed.distribuidoras_app_stock.loaders.EnvaseLoader;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestTemplate;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class CompraActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Envase>> {
+public class CompraActivity extends AppCompatActivity {
     private ListView itemsListView;
     private EditText txtFecha;
     private EditText txtNroComprobante;
@@ -33,8 +45,10 @@ public class CompraActivity extends AppCompatActivity implements LoaderManager.L
     private EditText txtPrecio;
     private Spinner cboEnvases;
     private Button btnAgregar;
+    private Button btnIngresar;
 
     private List<Envase> envases = new ArrayList<>();
+    private List<EstadoEnvase> estadosEnvase = new ArrayList<>();
     private List<ItemMovimientoStock> items = new ArrayList<>();
 
     private CompraAdapter compraAdapter;
@@ -82,7 +96,7 @@ public class CompraActivity extends AppCompatActivity implements LoaderManager.L
                 Float costo = Float.valueOf(txtPrecio.getText().toString());
 
                 item.setEnvase(env);
-                item.setEstadoEnvase(null);
+                item.setEstadoEnvase(estadosEnvase.get(0));
                 item.setCantidad(cantidad);
                 item.setCosto(costo);
                 item.setComodatoGenerado(false);
@@ -96,31 +110,116 @@ public class CompraActivity extends AppCompatActivity implements LoaderManager.L
             }
         });
 
+        btnIngresar = (Button) findViewById(R.id.ingresar);
+        btnIngresar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MovimientoStock movimiento = new MovimientoStock();
+
+                movimiento.setFecha(new DateConverter().stringToDate(txtFecha.getText().toString()));
+                movimiento.setHojaRuta(null);
+                movimiento.setTipoMovimiento("Compra");
+                movimiento.setModulo("Stock");
+                movimiento.setNroComprobante(txtNroComprobante.getText().toString());
+                movimiento.setItems(items);
+
+                new PostCompraTask().execute(movimiento);
+            }
+        });
+
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
         if (networkInfo != null && networkInfo.isConnected()) {
-            getLoaderManager().initLoader(0, null, this).forceLoad();
+            new LoadEnvasesTask().execute();
+            new LoadEstadosEnvaseTask().execute();
         } else {
-//            progressBar.setVisibility(View.GONE);
-//            emptyView.setText("No hay conexion a internet disponible");
+
         }
     }
 
-    @Override
-    public Loader<List<Envase>> onCreateLoader(int id, Bundle args) {
-        String url = "http://192.168.0.9:8080/distribuidoras-backend/envase/list";
+    private class LoadEnvasesTask extends AsyncTask<Void, Void, List<Envase>> {
+        @Override
+        protected List<Envase> doInBackground(Void... params) {
+            String url = "http://192.168.0.9:8080/envase/list";
 
-        return new EnvaseLoader(this, url);
+            try {
+                RestTemplate restTemplate = new RestTemplate();
+                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+
+                Envase[] envases = restTemplate.getForObject(url, Envase[].class);
+
+                return Arrays.asList(envases);
+            } catch (ResourceAccessException connectException) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(List<Envase> result) {
+            super.onPostExecute(result);
+
+            envases = result;
+
+            envaseAdapter.clear();
+            envaseAdapter.addAll(envases);
+        }
     }
 
-    @Override
-    public void onLoadFinished(Loader<List<Envase>> loader, List<Envase> envases) {
-        envaseAdapter.addAll(envases);
+    private class LoadEstadosEnvaseTask extends AsyncTask<Void, Void, List<EstadoEnvase>> {
+        @Override
+        protected List<EstadoEnvase> doInBackground(Void... params) {
+            String url = "http://192.168.0.9:8080/estadoEnvase/list";
+
+            try {
+                RestTemplate restTemplate = new RestTemplate();
+                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+
+                EstadoEnvase[] estadosEnvase = restTemplate.getForObject(url, EstadoEnvase[].class);
+
+                return Arrays.asList(estadosEnvase);
+            } catch (ResourceAccessException connectException) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(List<EstadoEnvase> result) {
+            super.onPostExecute(result);
+
+            estadosEnvase = result;
+        }
     }
 
-    @Override
-    public void onLoaderReset(Loader<List<Envase>> loader) {
-        envaseAdapter.clear();
+    private class PostCompraTask extends AsyncTask<MovimientoStock, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(MovimientoStock... params) {
+            String url = "http://192.168.0.9:8080/movimientoStock/add";
+
+            MovimientoStock movimiento = params[0];
+
+            try {
+                RestTemplate restTemplate = new RestTemplate();
+                ResponseEntity<MovimientoStock> response = restTemplate.postForEntity(url, movimiento, MovimientoStock.class);
+
+                return  (response.getStatusCode() == HttpStatus.OK);
+            } catch (ResourceAccessException connectException) {
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+
+            if (aBoolean) {
+                Toast.makeText(getApplicationContext(), "Ingresado", Toast.LENGTH_SHORT).show();
+            }
+
+            txtFecha.setText("");
+            txtNroComprobante.setText("");
+            items.clear();
+            compraAdapter.notifyDataSetChanged();
+        }
     }
 }

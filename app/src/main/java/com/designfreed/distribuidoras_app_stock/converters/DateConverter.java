@@ -22,4 +22,15 @@ public class DateConverter {
     public Date longToDate(Long fecha) {
         return new Date(fecha);
     }
+
+    public Date stringToDate(String fecha) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
+        try {
+            return formatter.parse(fecha);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
