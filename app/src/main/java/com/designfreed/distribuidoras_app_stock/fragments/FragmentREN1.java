@@ -12,28 +12,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestTemplate;
-
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
 import com.designfreed.distribuidoras_app_stock.R;
 import com.designfreed.distribuidoras_app_stock.activities.CargaActivity;
 import com.designfreed.distribuidoras_app_stock.domain.Carga;
 import com.designfreed.distribuidoras_app_stock.domain.ItemCarga;
 import com.designfreed.distribuidoras_app_stock.utils.Globales;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FragmentREN1 extends Fragment {
     private static final String SERVICE_URL = "http://bybgas.dyndns.org:8080/StockService/services/stockService/getCargaByHojaRuta?";
