@@ -1,0 +1,719 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/nombrechofer"
+            android:layout_above="@+id/grid"
+            android:layout_marginLeft="16dp"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            android:textColor="@color/chofer"/>
+
+        <GridLayout
+            android:id="@+id/grid"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="35dp"
+            android:columnCount="7"
+            android:rowCount="17">
+
+            <TextView
+                style="@style/StockTextViewMovimiento"
+                android:text="Carga Inicial"
+                android:layout_column="0"
+                android:layout_row="1" />
+
+            <TextView
+                style="@style/StockTextViewEstado"
+                android:text="Lleno"
+                android:layout_column="0"
+                android:layout_row="2"/>
+
+            <TextView
+                style="@style/StockTextViewMovimiento"
+                android:text="Reposiciones"
+                android:layout_column="0"
+                android:layout_row="3"/>
+
+            <TextView
+                style="@style/StockTextViewEstado"
+                android:text="Lleno"
+                android:layout_column="0"
+                android:layout_row="4"/>
+
+            <TextView
+                style="@style/StockTextViewEstado"
+                android:text="Vacio"
+                android:layout_column="0"
+                android:layout_row="5"/>
+
+            <TextView
+                style="@style/StockTextViewMovimiento"
+                android:text="Rendiciones"
+                android:layout_column="0"
+                android:layout_row="6"/>
+
+            <TextView
+                style="@style/StockTextViewEstado"
+                android:text="Lleno"
+                android:layout_column="0"
+                android:layout_row="7"/>
+
+            <TextView
+                style="@style/StockTextViewEstado"
+                android:text="Vacio"
+                android:layout_column="0"
+                android:layout_row="8"/>
+
+            <TextView
+                style="@style/StockTextViewEstado"
+                android:text="Averiado"
+                android:layout_column="0"
+                android:layout_row="9"/>
+
+            <TextView
+                style="@style/StockTextViewEstado"
+                android:text="Retiro"
+                android:layout_column="0"
+                android:layout_row="10"/>
+
+            <TextView
+                style="@style/StockTextViewEstado"
+                android:text="Entrega"
+                android:layout_column="0"
+                android:layout_row="11"/>
+
+            <TextView
+                style="@style/StockTextViewEstado"
+                android:text="Cambio"
+                android:layout_column="0"
+                android:layout_row="12"/>
+
+            <TextView
+                style="@style/StockTextViewMovimiento"
+                android:text="Venta Producto"
+                android:layout_column="0"
+                android:layout_row="13"/>
+
+            <TextView
+                style="@style/StockTextViewMovimiento"
+                android:text="Venta Envases"
+                android:layout_column="0"
+                android:layout_row="14"/>
+
+            <TextView
+                style="@style/StockTextViewMovimiento"
+                android:text="Compra Envases"
+                android:layout_column="0"
+                android:layout_row="15"/>
+
+            <TextView
+                style="@style/StockTextViewMovimiento"
+                android:text="CONTROL"
+                android:layout_column="0"
+                android:layout_row="16"/>
+
+            <TextView
+                style="@style/StockTextViewEnvase"
+                android:text="10"
+                android:layout_column="1"
+                android:layout_row="0"/>
+
+            <TextView
+                style="@style/StockTextViewEnvase"
+                android:text="12"
+                android:layout_column="2"
+                android:layout_row="0"/>
+
+            <TextView
+                style="@style/StockTextViewEnvase"
+                android:text="15"
+                android:layout_column="3"
+                android:layout_row="0"/>
+
+            <TextView
+                style="@style/StockTextViewEnvase"
+                android:text="15 Me"
+                android:layout_column="4"
+                android:layout_row="0"/>
+
+            <TextView
+                style="@style/StockTextViewEnvase"
+                android:text="30"
+                android:layout_column="5"
+                android:layout_row="0"/>
+
+            <TextView
+                style="@style/StockTextViewEnvase"
+                android:text="45"
+                android:layout_column="6"
+                android:layout_row="0"/>
+
+            <TextView
+                android:id="@+id/inicLleno10"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_row="2"/>
+
+            <TextView
+                android:id="@+id/repoLleno10"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_row="4"/>
+
+            <TextView
+                android:id="@+id/repoVacio10"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_row="5"/>
+
+            <TextView
+                android:id="@+id/rendLleno10"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_row="7"/>
+
+            <TextView
+                android:id="@+id/rendVacio10"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_row="8"/>
+
+            <TextView
+                android:id="@+id/rendAveriado10"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_row="9"/>
+
+            <TextView
+                android:id="@+id/rendRetiro10"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_row="10"/>
+
+            <TextView
+                android:id="@+id/rendEntrega10"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_row="11"/>
+
+            <TextView
+                android:id="@+id/rendCambio10"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_row="12"/>
+
+            <TextView
+                android:id="@+id/ventaProducto10"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_row="13"/>
+
+            <TextView
+                android:id="@+id/ventaEnvase10"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_row="14"/>
+
+            <TextView
+                android:id="@+id/compraEnvase10"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_row="15"/>
+
+            <TextView
+                android:id="@+id/control10"
+                style="@style/StockTextViewCantidad"
+                android:text="-"
+                android:layout_column="1"
+                android:layout_row="16"/>
+
+            <TextView
+                android:id="@+id/inicLleno12"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="2"
+                android:layout_row="2"/>
+
+            <TextView
+                android:id="@+id/repoLleno12"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="2"
+                android:layout_row="4"/>
+
+            <TextView
+                android:id="@+id/repoVacio12"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="2"
+                android:layout_row="5"/>
+
+            <TextView
+                android:id="@+id/rendLleno12"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="2"
+                android:layout_row="7"/>
+
+            <TextView
+                android:id="@+id/rendVacio12"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="2"
+                android:layout_row="8"/>
+
+            <TextView
+                android:id="@+id/rendAveriado12"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="2"
+                android:layout_row="9"/>
+
+            <TextView
+                android:id="@+id/rendRetiro12"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="2"
+                android:layout_row="10"/>
+
+            <TextView
+                android:id="@+id/rendEntrega12"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="2"
+                android:layout_row="11"/>
+
+            <TextView
+                android:id="@+id/rendCambio12"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="2"
+                android:layout_row="12"/>
+
+            <TextView
+                android:id="@+id/ventaProducto12"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="2"
+                android:layout_row="13"/>
+
+            <TextView
+                android:id="@+id/ventaEnvase12"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="2"
+                android:layout_row="14"/>
+
+            <TextView
+                android:id="@+id/compraEnvase12"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="2"
+                android:layout_row="15"/>
+
+            <TextView
+                android:id="@+id/control12"
+                style="@style/StockTextViewCantidad"
+                android:text="-"
+                android:layout_column="2"
+                android:layout_row="16"/>
+
+            <TextView
+                android:id="@+id/inicLleno15"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="3"
+                android:layout_row="2"/>
+
+            <TextView
+                android:id="@+id/repoLleno15"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="3"
+                android:layout_row="4"/>
+
+            <TextView
+                android:id="@+id/repoVacio15"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="3"
+                android:layout_row="5"/>
+
+            <TextView
+                android:id="@+id/rendLleno15"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="3"
+                android:layout_row="7"/>
+
+            <TextView
+                android:id="@+id/rendVacio15"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="3"
+                android:layout_row="8"/>
+
+            <TextView
+                android:id="@+id/rendAveriado15"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="3"
+                android:layout_row="9"/>
+
+            <TextView
+                android:id="@+id/rendRetiro15"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="3"
+                android:layout_row="10"/>
+
+            <TextView
+                android:id="@+id/rendEntrega15"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="3"
+                android:layout_row="11"/>
+
+            <TextView
+                android:id="@+id/rendCambio15"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="3"
+                android:layout_row="12"/>
+
+            <TextView
+                android:id="@+id/ventaProducto15"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="3"
+                android:layout_row="13"/>
+
+            <TextView
+                android:id="@+id/ventaEnvase15"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="3"
+                android:layout_row="14"/>
+
+            <TextView
+                android:id="@+id/compraEnvase15"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="3"
+                android:layout_row="15"/>
+
+            <TextView
+                android:id="@+id/control15"
+                style="@style/StockTextViewCantidad"
+                android:text="-"
+                android:layout_column="3"
+                android:layout_row="16"/>
+
+            <TextView
+                android:id="@+id/inicLleno15me"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="4"
+                android:layout_row="2"/>
+
+            <TextView
+                android:id="@+id/repoLleno15me"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="4"
+                android:layout_row="4"/>
+
+            <TextView
+                android:id="@+id/repoVacio15me"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="4"
+                android:layout_row="5"/>
+
+            <TextView
+                android:id="@+id/rendLleno15me"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="4"
+                android:layout_row="7"/>
+
+            <TextView
+                android:id="@+id/rendVacio15me"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="4"
+                android:layout_row="8"/>
+
+            <TextView
+                android:id="@+id/rendAveriado15me"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="4"
+                android:layout_row="9"/>
+
+            <TextView
+                android:id="@+id/rendRetiro15me"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="4"
+                android:layout_row="10"/>
+
+            <TextView
+                android:id="@+id/rendEntrega15me"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="4"
+                android:layout_row="11"/>
+
+            <TextView
+                android:id="@+id/rendCambio15me"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="4"
+                android:layout_row="12"/>
+
+            <TextView
+                android:id="@+id/ventaProducto15me"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="4"
+                android:layout_row="13"/>
+
+            <TextView
+                android:id="@+id/ventaEnvase15me"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="4"
+                android:layout_row="14"/>
+
+            <TextView
+                android:id="@+id/compraEnvase15me"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="4"
+                android:layout_row="15"/>
+
+            <TextView
+                android:id="@+id/control15me"
+                style="@style/StockTextViewCantidad"
+                android:text="-"
+                android:layout_column="4"
+                android:layout_row="16"/>
+
+            <TextView
+                android:id="@+id/inicLleno30"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="5"
+                android:layout_row="2"/>
+
+            <TextView
+                android:id="@+id/repoLleno30"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="5"
+                android:layout_row="4"/>
+
+            <TextView
+                android:id="@+id/repoVacio30"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="5"
+                android:layout_row="5"/>
+
+            <TextView
+                android:id="@+id/rendLleno30"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="5"
+                android:layout_row="7"/>
+
+            <TextView
+                android:id="@+id/rendVacio30"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="5"
+                android:layout_row="8"/>
+
+            <TextView
+                android:id="@+id/rendAveriado30"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="5"
+                android:layout_row="9"/>
+
+            <TextView
+                android:id="@+id/rendRetiro30"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="5"
+                android:layout_row="10"/>
+
+            <TextView
+                android:id="@+id/rendEntrega30"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="5"
+                android:layout_row="11"/>
+
+            <TextView
+                android:id="@+id/rendCambio30"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="5"
+                android:layout_row="12"/>
+
+            <TextView
+                android:id="@+id/ventaProducto30"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="5"
+                android:layout_row="13"/>
+
+            <TextView
+                android:id="@+id/ventaEnvase30"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="5"
+                android:layout_row="14"/>
+
+            <TextView
+                android:id="@+id/compraEnvase30"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="5"
+                android:layout_row="15"/>
+
+            <TextView
+                android:id="@+id/control30"
+                style="@style/StockTextViewCantidad"
+                android:text="-"
+                android:layout_column="5"
+                android:layout_row="16"/>
+
+            <TextView
+                android:id="@+id/inicLleno45"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="6"
+                android:layout_row="2"/>
+
+            <TextView
+                android:id="@+id/repoLleno45"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="6"
+                android:layout_row="4"/>
+
+            <TextView
+                android:id="@+id/repoVacio45"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="6"
+                android:layout_row="5"/>
+
+            <TextView
+                android:id="@+id/rendLleno45"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="6"
+                android:layout_row="7"/>
+
+            <TextView
+                android:id="@+id/rendVacio45"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="6"
+                android:layout_row="8"/>
+
+            <TextView
+                android:id="@+id/rendAveriado45"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="6"
+                android:layout_row="9"/>
+
+            <TextView
+                android:id="@+id/rendRetiro45"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="6"
+                android:layout_row="10"/>
+
+            <TextView
+                android:id="@+id/rendEntrega45"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="6"
+                android:layout_row="11"/>
+
+            <TextView
+                android:id="@+id/rendCambio45"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="6"
+                android:layout_row="12"/>
+
+            <TextView
+                android:id="@+id/ventaProducto45"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="6"
+                android:layout_row="13"/>
+
+            <TextView
+                android:id="@+id/ventaEnvase45"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="6"
+                android:layout_row="14"/>
+
+            <TextView
+                android:id="@+id/compraEnvase45"
+                style="@style/StockTextViewCantidad"
+                android:text="0"
+                android:layout_column="6"
+                android:layout_row="15"/>
+
+            <TextView
+                android:id="@+id/control45"
+                style="@style/StockTextViewCantidad"
+                android:text="-"
+                android:layout_column="6"
+                android:layout_row="16"/>
+        </GridLayout>
+
+        <Button
+            android:id="@+id/procesar"
+            android:layout_below="@id/grid"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Procesar"/>
+    </RelativeLayout>
+
+</ScrollView>

@@ -1,10 +1,11 @@
 package com.designfreed.distribuidoras_app_stock.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Carga {
+public class Carga implements Serializable {
     private Long id;
     private Date fecha;
     private TipoCarga tipo;

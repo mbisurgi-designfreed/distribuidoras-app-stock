@@ -101,9 +101,7 @@ public class CompraActivity extends AppCompatActivity {
 
                 compraAdapter.notifyDataSetChanged();
 
-                cboEnvases.setSelection(0);
-                txtCantidad.setText("");
-                txtPrecio.setText("");
+                resetItemFields();
             }
         });
 
@@ -215,10 +213,20 @@ public class CompraActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Ingreso fallido", Toast.LENGTH_SHORT).show();
             }
 
-            txtFecha.setText("");
-            txtNroComprobante.setText("");
-            items.clear();
-            compraAdapter.notifyDataSetChanged();
+            resetMovimientoFields();
         }
+    }
+
+    private void resetItemFields() {
+        cboEnvases.setSelection(0);
+        txtCantidad.setText("");
+        txtPrecio.setText("");
+    }
+
+    private void resetMovimientoFields() {
+        txtFecha.setText("");
+        txtNroComprobante.setText("");
+        items.clear();
+        compraAdapter.notifyDataSetChanged();
     }
 }

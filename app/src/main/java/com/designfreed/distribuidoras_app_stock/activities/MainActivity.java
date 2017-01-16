@@ -49,7 +49,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HojaRuta hoja = (HojaRuta) parent.getItemAtPosition(position);
+                String chofer = hoja.getChofer().getNombre() + ", " + hoja.getChofer().getApellido();
 
+                Intent intent = new Intent(getApplicationContext(), CargaActivity.class);
+                intent.putExtra("id", hoja.getId());
+                intent.putExtra("chofer", chofer);
+                startActivity(intent);
             }
         });
 
