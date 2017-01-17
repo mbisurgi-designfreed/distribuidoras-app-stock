@@ -15,15 +15,19 @@ import android.widget.Toast;
 import com.designfreed.distribuidoras_app_stock.R;
 import com.designfreed.distribuidoras_app_stock.activities.CargaActivity;
 import com.designfreed.distribuidoras_app_stock.domain.Carga;
+import com.designfreed.distribuidoras_app_stock.domain.Envase;
+import com.designfreed.distribuidoras_app_stock.domain.HojaRuta;
 import com.designfreed.distribuidoras_app_stock.domain.ItemCarga;
-import com.designfreed.distribuidoras_app_stock.utils.Globales;
+import com.designfreed.distribuidoras_app_stock.domain.TipoCarga;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FragmentREN2 extends Fragment {
@@ -68,8 +72,11 @@ public class FragmentREN2 extends Fragment {
     private Button procesar;
     private TextView choferNombre;
     private String chofer;
-    private Long hojaRutaId;
-    Carga carga;
+    private HojaRuta hojaRuta;
+    private Carga carga;
+    private List<Envase> envases = new ArrayList<>();
+    private List<TipoCarga> tipos = new ArrayList<>();
+
 
     public FragmentREN2() {
 
@@ -79,7 +86,7 @@ public class FragmentREN2 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.tipos_carga_ren2, container, false);
 
-        hojaRutaId = getArguments().getLong("id");
+        hojaRuta = (HojaRuta) getArguments().getSerializable("hoja");
 
         carga = (Carga) getArguments().getSerializable("cargaREN2");
         chofer = getArguments().getString("chofer");
@@ -197,6 +204,9 @@ public class FragmentREN2 extends Fragment {
         cambio45 = (EditText) rootView.findViewById(R.id.cambio45);
         cambio45.setText(String.valueOf(0));
 
+        new LoadEnvasesTask().execute();
+        new LoadTiposCargaTask().execute();
+
         procesar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -209,12 +219,62 @@ public class FragmentREN2 extends Fragment {
         return rootView;
     }
 
+    private class LoadEnvasesTask extends AsyncTask<Void, Void, List<Envase>> {
+        @Override
+        protected List<Envase> doInBackground(Void... params) {
+            String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/envase/list";
+
+            try {
+                RestTemplate restTemplate = new RestTemplate();
+                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+
+                Envase[] listado = restTemplate.getForObject(url, Envase[].class);
+
+                return Arrays.asList(listado);
+            } catch (ResourceAccessException connectException) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(List<Envase> result) {
+            super.onPostExecute(result);
+
+            setEnvases(result);
+        }
+    }
+
+    private class LoadTiposCargaTask extends AsyncTask<Void, Void, List<TipoCarga>> {
+        @Override
+        protected List<TipoCarga> doInBackground(Void... params) {
+            String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/tipoCarga/list";
+
+            try {
+                RestTemplate restTemplate = new RestTemplate();
+                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+
+                TipoCarga[] listado = restTemplate.getForObject(url, TipoCarga[].class);
+
+                return Arrays.asList(listado);
+            } catch (ResourceAccessException connectException) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(List<TipoCarga> result) {
+            super.onPostExecute(result);
+
+            setTipos(result);
+        }
+    }
+
     private class PostRendicion2AsyncTask extends AsyncTask<Carga, Void, Boolean> {
         @Override
         protected Boolean doInBackground(Carga... params) {
-            String url = "http://192.168.0.9:8080/carga/saveOrUpdate";
+            String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/carga/add";
 
-            crearCarga(carga);
+            carga = crearCarga(carga);
 
             try {
                 RestTemplate restTemplate = new RestTemplate();
@@ -237,17 +297,26 @@ public class FragmentREN2 extends Fragment {
             }
 
             Intent intent = new Intent(getContext(), CargaActivity.class);
-            intent.putExtra("id", hojaRutaId);
+            intent.putExtra("hoja", hojaRuta);
             intent.putExtra("chofer", chofer);
             startActivity(intent);
         }
     }
 
-    private void crearCarga(Carga carga) {
+    private void setEnvases(List<Envase> list) {
+        this.envases = list;
+    }
+
+    private void setTipos(List<TipoCarga> list) {
+        this.tipos = list;
+    }
+
+    private Carga crearCarga(Carga carga) {
+        Carga car = new Carga();
         List<ItemCarga> items = new ArrayList<>();
 
         ItemCarga garrafa10 = new ItemCarga();
-        garrafa10.setEnvase(Globales.getInstancia().getEnvases().get(0));
+        garrafa10.setEnvase(envases.get(0));
         garrafa10.setLleno(Integer.parseInt(lleno10.getText().toString()));
         garrafa10.setVacio(Integer.parseInt(vacio10.getText().toString()));
         garrafa10.setAveriado(Integer.parseInt(averiado10.getText().toString()));
@@ -256,7 +325,7 @@ public class FragmentREN2 extends Fragment {
         garrafa10.setCambio(Integer.parseInt(cambio10.getText().toString()));
 
         ItemCarga garrafa12 = new ItemCarga();
-        garrafa12.setEnvase(Globales.getInstancia().getEnvases().get(1));
+        garrafa12.setEnvase(envases.get(1));
         garrafa12.setLleno(Integer.parseInt(lleno12.getText().toString()));
         garrafa12.setVacio(Integer.parseInt(vacio12.getText().toString()));
         garrafa12.setAveriado(Integer.parseInt(averiado12.getText().toString()));
@@ -265,7 +334,7 @@ public class FragmentREN2 extends Fragment {
         garrafa12.setCambio(Integer.parseInt(cambio12.getText().toString()));
 
         ItemCarga garrafa15 = new ItemCarga();
-        garrafa15.setEnvase(Globales.getInstancia().getEnvases().get(2));
+        garrafa15.setEnvase(envases.get(2));
         garrafa15.setLleno(Integer.parseInt(lleno15.getText().toString()));
         garrafa15.setVacio(Integer.parseInt(vacio15.getText().toString()));
         garrafa15.setAveriado(Integer.parseInt(averiado15.getText().toString()));
@@ -274,7 +343,7 @@ public class FragmentREN2 extends Fragment {
         garrafa15.setCambio(Integer.parseInt(cambio15.getText().toString()));
 
         ItemCarga garrafa15me = new ItemCarga();
-        garrafa15me.setEnvase(Globales.getInstancia().getEnvases().get(3));
+        garrafa15me.setEnvase(envases.get(3));
         garrafa15me.setLleno(Integer.parseInt(lleno15me.getText().toString()));
         garrafa15me.setVacio(Integer.parseInt(vacio15me.getText().toString()));
         garrafa15me.setAveriado(Integer.parseInt(averiado15me.getText().toString()));
@@ -283,7 +352,7 @@ public class FragmentREN2 extends Fragment {
         garrafa15me.setCambio(Integer.parseInt(cambio15me.getText().toString()));
 
         ItemCarga garrafa30 = new ItemCarga();
-        garrafa30.setEnvase(Globales.getInstancia().getEnvases().get(4));
+        garrafa30.setEnvase(envases.get(4));
         garrafa30.setLleno(Integer.parseInt(lleno30.getText().toString()));
         garrafa30.setVacio(Integer.parseInt(vacio30.getText().toString()));
         garrafa30.setAveriado(Integer.parseInt(averiado30.getText().toString()));
@@ -292,7 +361,7 @@ public class FragmentREN2 extends Fragment {
         garrafa30.setCambio(Integer.parseInt(cambio30.getText().toString()));
 
         ItemCarga garrafa45 = new ItemCarga();
-        garrafa45.setEnvase(Globales.getInstancia().getEnvases().get(5));
+        garrafa45.setEnvase(envases.get(5));
         garrafa45.setLleno(Integer.parseInt(lleno45.getText().toString()));
         garrafa45.setVacio(Integer.parseInt(vacio45.getText().toString()));
         garrafa45.setAveriado(Integer.parseInt(averiado45.getText().toString()));
@@ -308,12 +377,14 @@ public class FragmentREN2 extends Fragment {
         items.add(garrafa45);
 
         if (carga == null) {
-            carga = new Carga();
-
-            carga.setTipo(Globales.getInstancia().getTipos().get(3));
-            carga.setItems(items);
+            car.setFecha(hojaRuta.getFecha());
+            car.setTipo(tipos.get(3));
+            car.setHojaRuta(hojaRuta);
+            car.setItems(items);
         } else {
-            for (ItemCarga item: carga.getItems()) {
+            car = carga;
+
+            for (ItemCarga item: car.getItems()) {
                 for (ItemCarga item1: items) {
                     if (item.getEnvase().getId().equals(item1.getEnvase().getId())) {
                         item.setLleno(item1.getLleno());
@@ -326,6 +397,8 @@ public class FragmentREN2 extends Fragment {
                 }
             }
         }
+
+        return car;
     }
 
     private void cargarCarga(Carga carga) {

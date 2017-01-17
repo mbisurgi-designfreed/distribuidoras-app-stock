@@ -136,7 +136,7 @@ public class CompraActivity extends AppCompatActivity {
     private class LoadEnvasesTask extends AsyncTask<Void, Void, List<Envase>> {
         @Override
         protected List<Envase> doInBackground(Void... params) {
-            String url = "http://192.168.0.9:8080/envase/list";
+            String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/envase/list";
 
             try {
                 RestTemplate restTemplate = new RestTemplate();
@@ -164,7 +164,7 @@ public class CompraActivity extends AppCompatActivity {
     private class LoadEstadosEnvaseTask extends AsyncTask<Void, Void, List<EstadoEnvase>> {
         @Override
         protected List<EstadoEnvase> doInBackground(Void... params) {
-            String url = "http://192.168.0.9:8080/estadoEnvase/list";
+            String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/estadoEnvase/list";
 
             try {
                 RestTemplate restTemplate = new RestTemplate();
@@ -189,7 +189,7 @@ public class CompraActivity extends AppCompatActivity {
     private class PostCompraTask extends AsyncTask<MovimientoStock, Void, Boolean> {
         @Override
         protected Boolean doInBackground(MovimientoStock... params) {
-            String url = "http://192.168.0.9:8080/movimientoStock/add";
+            String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/movimientoStock/add";
 
             MovimientoStock movimiento = params[0];
 

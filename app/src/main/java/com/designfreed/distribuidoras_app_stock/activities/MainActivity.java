@@ -22,6 +22,8 @@ import com.designfreed.distribuidoras_app_stock.converters.DateConverter;
 import com.designfreed.distribuidoras_app_stock.domain.HojaRuta;
 import com.designfreed.distribuidoras_app_stock.loaders.HojaRutaLoader;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 String chofer = hoja.getChofer().getNombre() + ", " + hoja.getChofer().getApellido();
 
                 Intent intent = new Intent(getApplicationContext(), CargaActivity.class);
-                intent.putExtra("id", hoja.getId());
+                intent.putExtra("hoja", hoja);
                 intent.putExtra("chofer", chofer);
                 startActivity(intent);
             }
@@ -89,9 +91,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public Loader<List<HojaRuta>> onCreateLoader(int id, Bundle args) {
-        Long fecha = new DateConverter().dateToLong(new Date());
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
-        String url = "http://192.168.0.9:8080/hojaRuta/findByFecha/" + fecha;
+        Date date = null;
+
+        try {
+            date = format.parse("22/06/2016");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        Long fecha = new DateConverter().dateToLong(date);
+        //Long fecha = new DateConverter().dateToLong(new Date());
+
+        String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/hojaRuta/findByFecha/" + fecha;
 
         return new HojaRutaLoader(this, url);
     }

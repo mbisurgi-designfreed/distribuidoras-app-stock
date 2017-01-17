@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.designfreed.distribuidoras_app_stock.domain.Carga;
+import com.designfreed.distribuidoras_app_stock.domain.HojaRuta;
 import com.designfreed.distribuidoras_app_stock.fragments.FragmentCIERRE;
 import com.designfreed.distribuidoras_app_stock.fragments.FragmentINIC;
 import com.designfreed.distribuidoras_app_stock.fragments.FragmentREN1;
@@ -23,9 +24,9 @@ public class CargaPagerAdapter extends FragmentPagerAdapter {
     private Carga cargaREPO = null;
     private Carga cargaREN2 = null;
 
-    public CargaPagerAdapter(FragmentManager fm, Long hojaRutaId, String chofer, List<Carga> cargas) {
+    public CargaPagerAdapter(FragmentManager fm, HojaRuta hojaRuta, String chofer, List<Carga> cargas) {
         super(fm);
-        this.parametros.putLong("id", hojaRutaId);
+        this.parametros.putSerializable("hoja", (Serializable) hojaRuta);
         this.parametros.putString("chofer", chofer);
         this.parametros.putSerializable("cargas", (Serializable) cargas);
 

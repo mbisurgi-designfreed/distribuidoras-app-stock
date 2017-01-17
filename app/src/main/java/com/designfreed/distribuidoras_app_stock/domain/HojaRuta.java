@@ -1,8 +1,9 @@
 package com.designfreed.distribuidoras_app_stock.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class HojaRuta {
+public class HojaRuta implements Serializable {
     private Long id;
     private Date fecha;
     private Chofer chofer;

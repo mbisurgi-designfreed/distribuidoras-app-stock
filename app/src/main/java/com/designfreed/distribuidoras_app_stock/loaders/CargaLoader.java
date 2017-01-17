@@ -14,12 +14,10 @@ import java.util.List;
 
 public class CargaLoader extends AsyncTaskLoader<List<Carga>> {
     private String url;
-    private Long hojaRutaId;
 
-    public CargaLoader(Context context, String url, Long hojaRutaId) {
+    public CargaLoader(Context context, String url) {
         super(context);
         this.url = url;
-        this.hojaRutaId = hojaRutaId;
     }
 
     @Override

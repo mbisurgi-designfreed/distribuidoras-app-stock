@@ -12,6 +12,7 @@ import android.os.Bundle;
 
 import com.designfreed.distribuidoras_app_stock.R;
 import com.designfreed.distribuidoras_app_stock.domain.Carga;
+import com.designfreed.distribuidoras_app_stock.domain.HojaRuta;
 import com.designfreed.distribuidoras_app_stock.loaders.CargaLoader;
 import com.designfreed.distribuidoras_app_stock.pagers.CargaPagerAdapter;
 
@@ -19,7 +20,7 @@ import java.util.List;
 
 public class CargaActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Carga>> {
     private static final String SERVICE_URL = "http://bybgas.dyndns.org:8080/StockService/services/stockService/getCargaByHojaRuta?";
-    private Long hojaRutaId;
+    private HojaRuta hojaRuta;
     private String chofer;
 
     @Override
@@ -27,7 +28,7 @@ public class CargaActivity extends AppCompatActivity implements LoaderManager.Lo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_carga);
 
-        hojaRutaId = (Long) getIntent().getSerializableExtra("id");
+        hojaRuta = (HojaRuta) getIntent().getSerializableExtra("hoja");
         chofer = getIntent().getStringExtra("chofer");
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -42,13 +43,15 @@ public class CargaActivity extends AppCompatActivity implements LoaderManager.Lo
 
     @Override
     public Loader<List<Carga>> onCreateLoader(int i, Bundle bundle) {
-        return new CargaLoader(this, SERVICE_URL, hojaRutaId);
+        String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/carga/findByHojaRuta/" + hojaRuta.getId();
+
+        return new CargaLoader(this, url);
     }
 
     @Override
     public void onLoadFinished(Loader<List<Carga>> loader, List<Carga> cargas) {
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        CargaPagerAdapter pagerAdapter = new CargaPagerAdapter(getSupportFragmentManager(), hojaRutaId, chofer, cargas);
+        CargaPagerAdapter pagerAdapter = new CargaPagerAdapter(getSupportFragmentManager(), hojaRuta, chofer, cargas);
         viewPager.setAdapter(pagerAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tablayout);
