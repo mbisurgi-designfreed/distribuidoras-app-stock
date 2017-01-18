@@ -16,16 +16,25 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.designfreed.distribuidoras_app_stock.R;
+import com.designfreed.distribuidoras_app_stock.activities.MainActivity;
+import com.designfreed.distribuidoras_app_stock.domain.Carga;
+import com.designfreed.distribuidoras_app_stock.domain.HojaRuta;
+import com.designfreed.distribuidoras_app_stock.domain.ItemCarga;
+import com.designfreed.distribuidoras_app_stock.domain.ItemMovimiento;
+import com.designfreed.distribuidoras_app_stock.domain.Movimiento;
+import com.designfreed.distribuidoras_app_stock.loaders.MovimientoLoader;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestTemplate;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-
-import com.designfreed.distribuidoras_app_stock.R;
-import com.designfreed.distribuidoras_app_stock.activities.MainActivity;
-import com.designfreed.distribuidoras_app_stock.domain.Carga;
-import com.designfreed.distribuidoras_app_stock.domain.Movimiento;
 
 public class FragmentCIERRE extends Fragment implements LoaderManager.LoaderCallbacks<List<Movimiento>> {
     private static final String SERVICE_URL = "http://bybgas.dyndns.org:8080/StockService/services/stockService/getMovimientoByHojaRuta?";
@@ -110,14 +119,14 @@ public class FragmentCIERRE extends Fragment implements LoaderManager.LoaderCall
     private TextView choferNombre;
     private Button procesar;
     private String chofer;
-    private Long hojaRutaId;
+    private HojaRuta hojaRuta;
     private List<Carga> cargas;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.cierre_stock, container, false);
 
-        hojaRutaId = getArguments().getLong("id");
+        hojaRuta = (HojaRuta) getArguments().getSerializable("hoja");
         chofer = getArguments().getString("chofer");
 
         choferNombre = (TextView) rootView.findViewById(R.id.nombrechofer);
@@ -225,9 +234,9 @@ public class FragmentCIERRE extends Fragment implements LoaderManager.LoaderCall
             }
         });
 
-        //cargarCargaInicial(cargas);
-        //cargarReposicion(cargas);
-        //cargarRendiciones(cargas);
+        cargarCargaInicial(cargas);
+        cargarReposicion(cargas);
+        cargarRendiciones(cargas);
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
@@ -241,537 +250,512 @@ public class FragmentCIERRE extends Fragment implements LoaderManager.LoaderCall
         return rootView;
     }
 
-    private class HttpAsyncTask extends AsyncTask<String, Void, String> {
+    private class PostCierreAsyncTask extends AsyncTask<HojaRuta, Void, Boolean> {
         @Override
-        protected String doInBackground(String... strings) {
-            String urlService = "http://bybgas.dyndns.org:8080/StockService/services/stockService/updateHojaRuta?hojaRutaId=";
-
-            urlService = urlService + hojaRutaId.toString();
-
-            String response = "";
-
-            HttpURLConnection httpURLConnection = null;
+        protected Boolean doInBackground(HojaRuta... params) {
+            String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/hojaRuta/update";
 
             try {
-                URL url = new URL(urlService);
+                RestTemplate restTemplate = new RestTemplate();
+                ResponseEntity<HojaRuta> response = restTemplate.postForEntity(url, hojaRuta, HojaRuta.class);
 
-                httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.setRequestMethod("GET");
-                httpURLConnection.connect();
-
-                int res = httpURLConnection.getResponseCode();
-
-                if (res == HttpURLConnection.HTTP_OK) {
-                    response = httpURLConnection.getResponseMessage();
-                }
-
-                if (res == 201) {
-                    response = httpURLConnection.getResponseMessage();
-                }
-
-                if (res == 400) {
-                    response = httpURLConnection.getResponseMessage();
-                }
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+                return  (response.getStatusCode() == HttpStatus.OK);
+            } catch (ResourceAccessException connectException) {
+                return false;
             }
-
-            return response;
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
 
-            Toast.makeText(getContext(), s, Toast.LENGTH_LONG).show();
-
-            //LoaderManager loader = getActivity().getLoaderManager();
-
-            //loader.getLoader(0).forceLoad();
+            if (aBoolean) {
+                Toast.makeText(getContext(), "Cierre satisfactorio", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Cierre fallido", Toast.LENGTH_SHORT).show();
+            }
 
             Intent intent = new Intent(getContext(), MainActivity.class);
             startActivity(intent);
         }
     }
 
-//    private void cargarCargaInicial(List<Carga> cargas) {
-//        Carga cargaInicial = null;
-//
-//        for (Carga carga: cargas) {
-//            if (carga.getTipoId().equals(1L)) {
-//                cargaInicial = carga;
-//                break;
-//            }
-//        }
-//
-//        Integer lleno10 = 0;
-//        Integer lleno12 = 0;
-//        Integer lleno15 = 0;
-//        Integer lleno15me = 0;
-//        Integer lleno30 = 0;
-//        Integer lleno45 = 0;
-//
-//        if (cargaInicial != null) {
-//            for (ItemCarga item: cargaInicial.getItems()) {
-//                if (item.getEnvaseId().equals(1)) {
-//                    lleno10 = item.getLleno();
-//                }
-//
-//                if (item.getEnvaseId().equals(2)) {
-//                    lleno12 = item.getLleno();
-//                }
-//
-//                if (item.getEnvaseId().equals(3)) {
-//                    lleno15 = item.getLleno();
-//                }
-//
-//                if (item.getEnvaseId().equals(4)) {
-//                    lleno15me = item.getLleno();
-//                }
-//
-//                if (item.getEnvaseId().equals(5)) {
-//                    lleno30 = item.getLleno();
-//                }
-//
-//                if (item.getEnvaseId().equals(6)) {
-//                    lleno45 = item.getLleno();
-//                }
-//            }
-//        }
-//
-//        inicLleno10.setText(String.valueOf(lleno10));
-//        inicLleno12.setText(String.valueOf(lleno12));
-//        inicLleno15.setText(String.valueOf(lleno15));
-//        inicLleno15me.setText(String.valueOf(lleno15me));
-//        inicLleno30.setText(String.valueOf(lleno30));
-//        inicLleno45.setText(String.valueOf(lleno45));
-//    }
+    private void cargarCargaInicial(List<Carga> cargas) {
+        Carga cargaInicial = null;
 
-//    private void cargarReposicion(List<Carga> cargas) {
-//        Carga cargaReposicion = null;
-//
-//        for (Carga carga: cargas) {
-//            if (carga.getTipoId().equals(2L)) {
-//                cargaReposicion = carga;
-//                break;
-//            }
-//        }
-//
-//        Integer lleno10 = 0;
-//        Integer lleno12 = 0;
-//        Integer lleno15 = 0;
-//        Integer lleno15me = 0;
-//        Integer lleno30 = 0;
-//        Integer lleno45 = 0;
-//
-//        Integer vacio10 = 0;
-//        Integer vacio12 = 0;
-//        Integer vacio15 = 0;
-//        Integer vacio15me = 0;
-//        Integer vacio30 = 0;
-//        Integer vacio45 = 0;
-//
-//        if (cargaReposicion != null) {
-//            for (ItemCarga item: cargaReposicion.getItems()) {
-//                if (item.getEnvaseId().equals(1)) {
-//                    lleno10 = item.getLleno();
-//                    vacio10 = item.getVacio();
-//                }
-//
-//                if (item.getEnvaseId().equals(2)) {
-//                    lleno12 = item.getLleno();
-//                    vacio12 = item.getVacio();
-//                }
-//
-//                if (item.getEnvaseId().equals(3)) {
-//                    lleno15 = item.getLleno();
-//                    vacio15 = item.getVacio();
-//                }
-//
-//                if (item.getEnvaseId().equals(4)) {
-//                    lleno15me = item.getLleno();
-//                    vacio15me = item.getVacio();
-//                }
-//
-//                if (item.getEnvaseId().equals(5)) {
-//                    lleno30 = item.getLleno();
-//                    vacio30 = item.getVacio();
-//                }
-//
-//                if (item.getEnvaseId().equals(6)) {
-//                    lleno45 = item.getLleno();
-//                    vacio45 = item.getVacio();
-//                }
-//            }
-//        }
-//
-//        repoLleno10.setText(String.valueOf(lleno10));
-//        repoLleno12.setText(String.valueOf(lleno12));
-//        repoLleno15.setText(String.valueOf(lleno15));
-//        repoLleno15me.setText(String.valueOf(lleno15me));
-//        repoLleno30.setText(String.valueOf(lleno30));
-//        repoLleno45.setText(String.valueOf(lleno45));
-//
-//        repoVacio10.setText(String.valueOf(vacio10));
-//        repoVacio12.setText(String.valueOf(vacio12));
-//        repoVacio15.setText(String.valueOf(vacio15));
-//        repoVacio15me.setText(String.valueOf(vacio15me));
-//        repoVacio30.setText(String.valueOf(vacio30));
-//        repoVacio45.setText(String.valueOf(vacio45));
-//    }
+        for (Carga carga: cargas) {
+            if (carga.getTipo().getId().equals(1L)) {
+                cargaInicial = carga;
+                break;
+            }
+        }
 
-//    private void cargarRendiciones(List<Carga> cargas) {
-//        Carga cargaRendicion1 = null;
-//        Carga cargaRendicion2 = null;
-//
-//        for (Carga carga: cargas) {
-//            if (carga.getTipoId().equals(3L)) {
-//                cargaRendicion1 = carga;
-//                break;
-//            }
-//        }
-//
-//        for (Carga carga: cargas) {
-//            if (carga.getTipoId().equals(4L)) {
-//                cargaRendicion2 = carga;
-//                break;
-//            }
-//        }
-//
-//        Integer lleno10 = 0;
-//        Integer lleno12 = 0;
-//        Integer lleno15 = 0;
-//        Integer lleno15me = 0;
-//        Integer lleno30 = 0;
-//        Integer lleno45 = 0;
-//
-//        Integer vacio10 = 0;
-//        Integer vacio12 = 0;
-//        Integer vacio15 = 0;
-//        Integer vacio15me = 0;
-//        Integer vacio30 = 0;
-//        Integer vacio45 = 0;
-//
-//        Integer averiado10 = 0;
-//        Integer averiado12 = 0;
-//        Integer averiado15 = 0;
-//        Integer averiado15me = 0;
-//        Integer averiado30 = 0;
-//        Integer averiado45 = 0;
-//
-//        Integer retiro10 = 0;
-//        Integer retiro12 = 0;
-//        Integer retiro15 = 0;
-//        Integer retiro15me = 0;
-//        Integer retiro30 = 0;
-//        Integer retiro45 = 0;
-//
-//        Integer entrega10 = 0;
-//        Integer entrega12 = 0;
-//        Integer entrega15 = 0;
-//        Integer entrega15me = 0;
-//        Integer entrega30 = 0;
-//        Integer entrega45 = 0;
-//
-//        Integer cambio10 = 0;
-//        Integer cambio12 = 0;
-//        Integer cambio15 = 0;
-//        Integer cambio15me = 0;
-//        Integer cambio30 = 0;
-//        Integer cambio45 = 0;
-//
-//        if (cargaRendicion1 != null) {
-//            for (ItemCarga item: cargaRendicion1.getItems()) {
-//                if (item.getEnvaseId().equals(1)) {
-//                    lleno10 = lleno10 + item.getLleno();
-//                    vacio10 = vacio10 + item.getVacio();
-//                    averiado10 = averiado10 + item.getAveriado();
-//                    retiro10 = retiro10 + item.getRetiro();
-//                    entrega10 = entrega10 + item.getEntrega();
-//                    cambio10 = cambio10 + item.getCambio();
-//                }
-//
-//                if (item.getEnvaseId().equals(2)) {
-//                    lleno12 = lleno12 + item.getLleno();
-//                    vacio12 = vacio12 + item.getVacio();
-//                    averiado12 = averiado12 + item.getAveriado();
-//                    retiro12 = retiro12 + item.getRetiro();
-//                    entrega12 = entrega12 + item.getEntrega();
-//                    cambio12 = cambio12 + item.getCambio();
-//                }
-//
-//                if (item.getEnvaseId().equals(3)) {
-//                    lleno15 = lleno15 + item.getLleno();
-//                    vacio15 = vacio15 + item.getVacio();
-//                    averiado15 = averiado15 + item.getAveriado();
-//                    retiro15 = retiro15 + item.getRetiro();
-//                    entrega15 = entrega15 + item.getEntrega();
-//                    cambio15 = cambio15 + item.getCambio();
-//                }
-//
-//                if (item.getEnvaseId().equals(4)) {
-//                    lleno15me = lleno15me + item.getLleno();
-//                    vacio15me = vacio15me + item.getVacio();
-//                    averiado15me = averiado15me + item.getAveriado();
-//                    retiro15me = retiro15me + item.getRetiro();
-//                    entrega15me = entrega15me + item.getEntrega();
-//                    cambio15me = cambio15me + item.getCambio();
-//                }
-//
-//                if (item.getEnvaseId().equals(5)) {
-//                    lleno30 = lleno30 + item.getLleno();
-//                    vacio30 = vacio30 + item.getVacio();
-//                    averiado30 = averiado30 + item.getAveriado();
-//                    retiro30 = retiro30 + item.getRetiro();
-//                    entrega30 = entrega30 + item.getEntrega();
-//                    cambio30 = cambio30 + item.getCambio();
-//                }
-//
-//                if (item.getEnvaseId().equals(6)) {
-//                    lleno45 = lleno45 + item.getLleno();
-//                    vacio45 = vacio45 + item.getVacio();
-//                    averiado45 = averiado45 + item.getAveriado();
-//                    retiro45 = retiro45 + item.getRetiro();
-//                    entrega45 = entrega45 + item.getEntrega();
-//                    cambio45 = cambio45 + item.getCambio();
-//                }
-//            }
-//        }
-//
-//        if (cargaRendicion2 != null) {
-//            for (ItemCarga item: cargaRendicion2.getItems()) {
-//                if (item.getEnvaseId().equals(1)) {
-//                    lleno10 = lleno10 + item.getLleno();
-//                    vacio10 = vacio10 + item.getVacio();
-//                    averiado10 = averiado10 + item.getAveriado();
-//                    retiro10 = retiro10 + item.getRetiro();
-//                    entrega10 = entrega10 + item.getEntrega();
-//                    cambio10 = cambio10 + item.getCambio();
-//                }
-//
-//                if (item.getEnvaseId().equals(2)) {
-//                    lleno12 = lleno12 + item.getLleno();
-//                    vacio12 = vacio12 + item.getVacio();
-//                    averiado12 = averiado12 + item.getAveriado();
-//                    retiro12 = retiro12 + item.getRetiro();
-//                    entrega12 = entrega12 + item.getEntrega();
-//                    cambio12 = cambio12 + item.getCambio();
-//                }
-//
-//                if (item.getEnvaseId().equals(3)) {
-//                    lleno15 = lleno15 + item.getLleno();
-//                    vacio15 = vacio15 + item.getVacio();
-//                    averiado15 = averiado15 + item.getAveriado();
-//                    retiro15 = retiro15 + item.getRetiro();
-//                    entrega15 = entrega15 + item.getEntrega();
-//                    cambio15 = cambio15 + item.getCambio();
-//                }
-//
-//                if (item.getEnvaseId().equals(4)) {
-//                    lleno15me = lleno15me + item.getLleno();
-//                    vacio15me = vacio15me + item.getVacio();
-//                    averiado15me = averiado15me + item.getAveriado();
-//                    retiro15me = retiro15me + item.getRetiro();
-//                    entrega15me = entrega15me + item.getEntrega();
-//                    cambio15me = cambio15me + item.getCambio();
-//                }
-//
-//                if (item.getEnvaseId().equals(5)) {
-//                    lleno30 = lleno30 + item.getLleno();
-//                    vacio30 = vacio30 + item.getVacio();
-//                    averiado30 = averiado30 + item.getAveriado();
-//                    retiro30 = retiro30 + item.getRetiro();
-//                    entrega30 = entrega30 + item.getEntrega();
-//                    cambio30 = cambio30 + item.getCambio();
-//                }
-//
-//                if (item.getEnvaseId().equals(6)) {
-//                    lleno45 = lleno45 + item.getLleno();
-//                    vacio45 = vacio45 + item.getVacio();
-//                    averiado45 = averiado45 + item.getAveriado();
-//                    retiro45 = retiro45 + item.getRetiro();
-//                    entrega45 = entrega45 + item.getEntrega();
-//                    cambio45 = cambio45 + item.getCambio();
-//                }
-//            }
-//        }
-//
-//        rendLleno10.setText(String.valueOf(lleno10));
-//        rendLleno12.setText(String.valueOf(lleno12));
-//        rendLleno15.setText(String.valueOf(lleno15));
-//        rendLleno15me.setText(String.valueOf(lleno15me));
-//        rendLleno30.setText(String.valueOf(lleno30));
-//        rendLleno45.setText(String.valueOf(lleno45));
-//
-//        rendVacio10.setText(String.valueOf(vacio10));
-//        rendVacio12.setText(String.valueOf(vacio12));
-//        rendVacio15.setText(String.valueOf(vacio15));
-//        rendVacio15me.setText(String.valueOf(vacio15me));
-//        rendVacio30.setText(String.valueOf(vacio30));
-//        rendVacio45.setText(String.valueOf(vacio45));
-//
-//        rendAveriado10.setText(String.valueOf(averiado10));
-//        rendAveriado12.setText(String.valueOf(averiado12));
-//        rendAveriado15.setText(String.valueOf(averiado15));
-//        rendAveriado15me.setText(String.valueOf(averiado15me));
-//        rendAveriado30.setText(String.valueOf(averiado30));
-//        rendAveriado45.setText(String.valueOf(averiado45));
-//
-//        rendRetiro10.setText(String.valueOf(retiro10));
-//        rendRetiro12.setText(String.valueOf(retiro12));
-//        rendRetiro15.setText(String.valueOf(retiro15));
-//        rendRetiro15me.setText(String.valueOf(retiro15me));
-//        rendRetiro30.setText(String.valueOf(retiro30));
-//        rendRetiro45.setText(String.valueOf(retiro45));
-//
-//        rendEntrega10.setText(String.valueOf(entrega10));
-//        rendEntrega12.setText(String.valueOf(entrega12));
-//        rendEntrega15.setText(String.valueOf(entrega15));
-//        rendEntrega15me.setText(String.valueOf(entrega15me));
-//        rendEntrega30.setText(String.valueOf(entrega30));
-//        rendEntrega45.setText(String.valueOf(entrega45));
-//
-//        rendCambio10.setText(String.valueOf(cambio10));
-//        rendCambio12.setText(String.valueOf(cambio12));
-//        rendCambio15.setText(String.valueOf(cambio15));
-//        rendCambio15me.setText(String.valueOf(cambio15me));
-//        rendCambio30.setText(String.valueOf(cambio30));
-//        rendCambio45.setText(String.valueOf(cambio45));
-//    }
+        Integer lleno10 = 0;
+        Integer lleno12 = 0;
+        Integer lleno15 = 0;
+        Integer lleno15me = 0;
+        Integer lleno30 = 0;
+        Integer lleno45 = 0;
 
-//    private void cargarVentasProducto(List<Movimiento> movimientos) {
-//        Integer venta10 = 0;
-//        Integer venta12 = 0;
-//        Integer venta15 = 0;
-//        Integer venta15me = 0;
-//        Integer venta30 = 0;
-//        Integer venta45 = 0;
-//
-//        for (Movimiento mov: movimientos) {
-//            for (ItemMovimiento item: mov.getItems()) {
-//                if (item.getEnvaseId().equals(1)) {
-//                    venta10 = venta10 + item.getCantidad();
-//                }
-//
-//                if (item.getEnvaseId().equals(2)) {
-//                    venta12 = venta12 + item.getCantidad();
-//                }
-//
-//                if (item.getEnvaseId().equals(3)) {
-//                    venta15 = venta15 + item.getCantidad();
-//                }
-//
-//                if (item.getEnvaseId().equals(4)) {
-//                    venta15me = venta15me + item.getCantidad();
-//                }
-//
-//                if (item.getEnvaseId().equals(5)) {
-//                    venta30 = venta30 + item.getCantidad();
-//                }
-//
-//                if (item.getEnvaseId().equals(6)) {
-//                    venta45 = venta45 + item.getCantidad();
-//                }
-//            }
-//        }
-//
-//        ventaProducto10.setText(String.valueOf(venta10));
-//        ventaProducto12.setText(String.valueOf(venta12));
-//        ventaProducto15.setText(String.valueOf(venta15));
-//        ventaProducto15me.setText(String.valueOf(venta15me));
-//        ventaProducto30.setText(String.valueOf(venta30));
-//        ventaProducto45.setText(String.valueOf(venta45));
-//    }
+        if (cargaInicial != null) {
+            for (ItemCarga item: cargaInicial.getItems()) {
+                if (item.getEnvase().getId().equals(1L)) {
+                    lleno10 = item.getLleno();
+                }
 
-//    private void cargarVentasEnvases(List<Movimiento> movimientos) {
-//        Integer venta10 = 0;
-//        Integer venta12 = 0;
-//        Integer venta15 = 0;
-//        Integer venta15me = 0;
-//        Integer venta30 = 0;
-//        Integer venta45 = 0;
-//
-//        for (Movimiento mov: movimientos) {
-//            for (ItemMovimiento item: mov.getItems()) {
-//                if (item.getEnvaseId().equals(7) && item.getCantidad() > 0) {
-//                    venta10 = venta10 + item.getCantidad();
-//                }
-//
-//                if (item.getEnvaseId().equals(8) && item.getCantidad() > 0) {
-//                    venta12 = venta12 + item.getCantidad();
-//                }
-//
-//                if (item.getEnvaseId().equals(9) && item.getCantidad() > 0) {
-//                    venta15 = venta15 + item.getCantidad();
-//                }
-//
-//                if (item.getEnvaseId().equals(10) && item.getCantidad() > 0) {
-//                    venta15me = venta15me + item.getCantidad();
-//                }
-//
-//                if (item.getEnvaseId().equals(11) && item.getCantidad() > 0) {
-//                    venta30 = venta30 + item.getCantidad();
-//                }
-//
-//                if (item.getEnvaseId().equals(12) && item.getCantidad() > 0) {
-//                    venta45 = venta45 + item.getCantidad();
-//                }
-//            }
-//        }
-//
-//        ventaEnvase10.setText(String.valueOf(venta10));
-//        ventaEnvase12.setText(String.valueOf(venta12));
-//        ventaEnvase15.setText(String.valueOf(venta15));
-//        ventaEnvase15me.setText(String.valueOf(venta15me));
-//        ventaEnvase30.setText(String.valueOf(venta30));
-//        ventaEnvase45.setText(String.valueOf(venta45));
-//    }
+                if (item.getEnvase().getId().equals(2L)) {
+                    lleno12 = item.getLleno();
+                }
 
-//    private void cargarComprasEnvases(List<Movimiento> movimientos) {
-//        Integer compra10 = 0;
-//        Integer compra12 = 0;
-//        Integer compra15 = 0;
-//        Integer compra15me = 0;
-//        Integer compra30 = 0;
-//        Integer compra45 = 0;
-//
-//        for (Movimiento mov: movimientos) {
-//            for (ItemMovimiento item: mov.getItems()) {
-//                if (item.getEnvaseId().equals(7) && item.getCantidad() < 0) {
-//                    compra10 = compra10 + (item.getCantidad() * -1);
-//                }
-//
-//                if (item.getEnvaseId().equals(8) && item.getCantidad() < 0) {
-//                    compra12 = compra12 + (item.getCantidad() * -1);
-//                }
-//
-//                if (item.getEnvaseId().equals(9) && item.getCantidad() < 0) {
-//                    compra15 = compra15 + (item.getCantidad() * -1);
-//                }
-//
-//                if (item.getEnvaseId().equals(10) && item.getCantidad() < 0) {
-//                    compra15me = compra15me + (item.getCantidad() * -1);
-//                }
-//
-//                if (item.getEnvaseId().equals(11) && item.getCantidad() < 0) {
-//                    compra30 = compra30 + (item.getCantidad() * -1);
-//                }
-//
-//                if (item.getEnvaseId().equals(12) && item.getCantidad() < 0) {
-//                    compra45 = compra45 + (item.getCantidad() * -1);
-//                }
-//            }
-//        }
-//
-//        compraEnvase10.setText(String.valueOf(compra10));
-//        compraEnvase12.setText(String.valueOf(compra12));
-//        compraEnvase15.setText(String.valueOf(compra15));
-//        compraEnvase15me.setText(String.valueOf(compra15me));
-//        compraEnvase30.setText(String.valueOf(compra30));
-//        compraEnvase45.setText(String.valueOf(compra45));
-//    }
+                if (item.getEnvase().getId().equals(3L)) {
+                    lleno15 = item.getLleno();
+                }
+
+                if (item.getEnvase().getId().equals(4L)) {
+                    lleno15me = item.getLleno();
+                }
+
+                if (item.getEnvase().getId().equals(5L)) {
+                    lleno30 = item.getLleno();
+                }
+
+                if (item.getEnvase().getId().equals(6L)) {
+                    lleno45 = item.getLleno();
+                }
+            }
+        }
+
+        inicLleno10.setText(String.valueOf(lleno10));
+        inicLleno12.setText(String.valueOf(lleno12));
+        inicLleno15.setText(String.valueOf(lleno15));
+        inicLleno15me.setText(String.valueOf(lleno15me));
+        inicLleno30.setText(String.valueOf(lleno30));
+        inicLleno45.setText(String.valueOf(lleno45));
+    }
+
+    private void cargarReposicion(List<Carga> cargas) {
+        Carga cargaReposicion = null;
+
+        for (Carga carga: cargas) {
+            if (carga.getTipo().getId().equals(2L)) {
+                cargaReposicion = carga;
+                break;
+            }
+        }
+
+        Integer lleno10 = 0;
+        Integer lleno12 = 0;
+        Integer lleno15 = 0;
+        Integer lleno15me = 0;
+        Integer lleno30 = 0;
+        Integer lleno45 = 0;
+
+        Integer vacio10 = 0;
+        Integer vacio12 = 0;
+        Integer vacio15 = 0;
+        Integer vacio15me = 0;
+        Integer vacio30 = 0;
+        Integer vacio45 = 0;
+
+        if (cargaReposicion != null) {
+            for (ItemCarga item: cargaReposicion.getItems()) {
+                if (item.getEnvase().getId().equals(1L)) {
+                    lleno10 = item.getLleno();
+                    vacio10 = item.getVacio();
+                }
+
+                if (item.getEnvase().getId().equals(2L)) {
+                    lleno12 = item.getLleno();
+                    vacio12 = item.getVacio();
+                }
+
+                if (item.getEnvase().getId().equals(3L)) {
+                    lleno15 = item.getLleno();
+                    vacio15 = item.getVacio();
+                }
+
+                if (item.getEnvase().getId().equals(4L)) {
+                    lleno15me = item.getLleno();
+                    vacio15me = item.getVacio();
+                }
+
+                if (item.getEnvase().getId().equals(5L)) {
+                    lleno30 = item.getLleno();
+                    vacio30 = item.getVacio();
+                }
+
+                if (item.getEnvase().getId().equals(6L)) {
+                    lleno45 = item.getLleno();
+                    vacio45 = item.getVacio();
+                }
+            }
+        }
+
+        repoLleno10.setText(String.valueOf(lleno10));
+        repoLleno12.setText(String.valueOf(lleno12));
+        repoLleno15.setText(String.valueOf(lleno15));
+        repoLleno15me.setText(String.valueOf(lleno15me));
+        repoLleno30.setText(String.valueOf(lleno30));
+        repoLleno45.setText(String.valueOf(lleno45));
+
+        repoVacio10.setText(String.valueOf(vacio10));
+        repoVacio12.setText(String.valueOf(vacio12));
+        repoVacio15.setText(String.valueOf(vacio15));
+        repoVacio15me.setText(String.valueOf(vacio15me));
+        repoVacio30.setText(String.valueOf(vacio30));
+        repoVacio45.setText(String.valueOf(vacio45));
+    }
+
+    private void cargarRendiciones(List<Carga> cargas) {
+        Carga cargaRendicion1 = null;
+        Carga cargaRendicion2 = null;
+
+        for (Carga carga: cargas) {
+            if (carga.getTipo().getId().equals(3L)) {
+                cargaRendicion1 = carga;
+                break;
+            }
+        }
+
+        for (Carga carga: cargas) {
+            if (carga.getTipo().getId().equals(4L)) {
+                cargaRendicion2 = carga;
+                break;
+            }
+        }
+
+        Integer lleno10 = 0;
+        Integer lleno12 = 0;
+        Integer lleno15 = 0;
+        Integer lleno15me = 0;
+        Integer lleno30 = 0;
+        Integer lleno45 = 0;
+
+        Integer vacio10 = 0;
+        Integer vacio12 = 0;
+        Integer vacio15 = 0;
+        Integer vacio15me = 0;
+        Integer vacio30 = 0;
+        Integer vacio45 = 0;
+
+        Integer averiado10 = 0;
+        Integer averiado12 = 0;
+        Integer averiado15 = 0;
+        Integer averiado15me = 0;
+        Integer averiado30 = 0;
+        Integer averiado45 = 0;
+
+        Integer retiro10 = 0;
+        Integer retiro12 = 0;
+        Integer retiro15 = 0;
+        Integer retiro15me = 0;
+        Integer retiro30 = 0;
+        Integer retiro45 = 0;
+
+        Integer entrega10 = 0;
+        Integer entrega12 = 0;
+        Integer entrega15 = 0;
+        Integer entrega15me = 0;
+        Integer entrega30 = 0;
+        Integer entrega45 = 0;
+
+        Integer cambio10 = 0;
+        Integer cambio12 = 0;
+        Integer cambio15 = 0;
+        Integer cambio15me = 0;
+        Integer cambio30 = 0;
+        Integer cambio45 = 0;
+
+        if (cargaRendicion1 != null) {
+            for (ItemCarga item: cargaRendicion1.getItems()) {
+                if (item.getEnvase().getId().equals(1L)) {
+                    lleno10 = lleno10 + item.getLleno();
+                    vacio10 = vacio10 + item.getVacio();
+                    averiado10 = averiado10 + item.getAveriado();
+                    retiro10 = retiro10 + item.getRetiro();
+                    entrega10 = entrega10 + item.getEntrega();
+                    cambio10 = cambio10 + item.getCambio();
+                }
+
+                if (item.getEnvase().getId().equals(2L)) {
+                    lleno12 = lleno12 + item.getLleno();
+                    vacio12 = vacio12 + item.getVacio();
+                    averiado12 = averiado12 + item.getAveriado();
+                    retiro12 = retiro12 + item.getRetiro();
+                    entrega12 = entrega12 + item.getEntrega();
+                    cambio12 = cambio12 + item.getCambio();
+                }
+
+                if (item.getEnvase().getId().equals(3L)) {
+                    lleno15 = lleno15 + item.getLleno();
+                    vacio15 = vacio15 + item.getVacio();
+                    averiado15 = averiado15 + item.getAveriado();
+                    retiro15 = retiro15 + item.getRetiro();
+                    entrega15 = entrega15 + item.getEntrega();
+                    cambio15 = cambio15 + item.getCambio();
+                }
+
+                if (item.getEnvase().getId().equals(4L)) {
+                    lleno15me = lleno15me + item.getLleno();
+                    vacio15me = vacio15me + item.getVacio();
+                    averiado15me = averiado15me + item.getAveriado();
+                    retiro15me = retiro15me + item.getRetiro();
+                    entrega15me = entrega15me + item.getEntrega();
+                    cambio15me = cambio15me + item.getCambio();
+                }
+
+                if (item.getEnvase().getId().equals(5L)) {
+                    lleno30 = lleno30 + item.getLleno();
+                    vacio30 = vacio30 + item.getVacio();
+                    averiado30 = averiado30 + item.getAveriado();
+                    retiro30 = retiro30 + item.getRetiro();
+                    entrega30 = entrega30 + item.getEntrega();
+                    cambio30 = cambio30 + item.getCambio();
+                }
+
+                if (item.getEnvase().getId().equals(6L)) {
+                    lleno45 = lleno45 + item.getLleno();
+                    vacio45 = vacio45 + item.getVacio();
+                    averiado45 = averiado45 + item.getAveriado();
+                    retiro45 = retiro45 + item.getRetiro();
+                    entrega45 = entrega45 + item.getEntrega();
+                    cambio45 = cambio45 + item.getCambio();
+                }
+            }
+        }
+
+        if (cargaRendicion2 != null) {
+            for (ItemCarga item: cargaRendicion2.getItems()) {
+                if (item.getEnvase().getId().equals(1L)) {
+                    lleno10 = lleno10 + item.getLleno();
+                    vacio10 = vacio10 + item.getVacio();
+                    averiado10 = averiado10 + item.getAveriado();
+                    retiro10 = retiro10 + item.getRetiro();
+                    entrega10 = entrega10 + item.getEntrega();
+                    cambio10 = cambio10 + item.getCambio();
+                }
+
+                if (item.getEnvase().getId().equals(2L)) {
+                    lleno12 = lleno12 + item.getLleno();
+                    vacio12 = vacio12 + item.getVacio();
+                    averiado12 = averiado12 + item.getAveriado();
+                    retiro12 = retiro12 + item.getRetiro();
+                    entrega12 = entrega12 + item.getEntrega();
+                    cambio12 = cambio12 + item.getCambio();
+                }
+
+                if (item.getEnvase().getId().equals(3L)) {
+                    lleno15 = lleno15 + item.getLleno();
+                    vacio15 = vacio15 + item.getVacio();
+                    averiado15 = averiado15 + item.getAveriado();
+                    retiro15 = retiro15 + item.getRetiro();
+                    entrega15 = entrega15 + item.getEntrega();
+                    cambio15 = cambio15 + item.getCambio();
+                }
+
+                if (item.getEnvase().getId().equals(4L)) {
+                    lleno15me = lleno15me + item.getLleno();
+                    vacio15me = vacio15me + item.getVacio();
+                    averiado15me = averiado15me + item.getAveriado();
+                    retiro15me = retiro15me + item.getRetiro();
+                    entrega15me = entrega15me + item.getEntrega();
+                    cambio15me = cambio15me + item.getCambio();
+                }
+
+                if (item.getEnvase().getId().equals(5L)) {
+                    lleno30 = lleno30 + item.getLleno();
+                    vacio30 = vacio30 + item.getVacio();
+                    averiado30 = averiado30 + item.getAveriado();
+                    retiro30 = retiro30 + item.getRetiro();
+                    entrega30 = entrega30 + item.getEntrega();
+                    cambio30 = cambio30 + item.getCambio();
+                }
+
+                if (item.getEnvase().getId().equals(6L)) {
+                    lleno45 = lleno45 + item.getLleno();
+                    vacio45 = vacio45 + item.getVacio();
+                    averiado45 = averiado45 + item.getAveriado();
+                    retiro45 = retiro45 + item.getRetiro();
+                    entrega45 = entrega45 + item.getEntrega();
+                    cambio45 = cambio45 + item.getCambio();
+                }
+            }
+        }
+
+        rendLleno10.setText(String.valueOf(lleno10));
+        rendLleno12.setText(String.valueOf(lleno12));
+        rendLleno15.setText(String.valueOf(lleno15));
+        rendLleno15me.setText(String.valueOf(lleno15me));
+        rendLleno30.setText(String.valueOf(lleno30));
+        rendLleno45.setText(String.valueOf(lleno45));
+
+        rendVacio10.setText(String.valueOf(vacio10));
+        rendVacio12.setText(String.valueOf(vacio12));
+        rendVacio15.setText(String.valueOf(vacio15));
+        rendVacio15me.setText(String.valueOf(vacio15me));
+        rendVacio30.setText(String.valueOf(vacio30));
+        rendVacio45.setText(String.valueOf(vacio45));
+
+        rendAveriado10.setText(String.valueOf(averiado10));
+        rendAveriado12.setText(String.valueOf(averiado12));
+        rendAveriado15.setText(String.valueOf(averiado15));
+        rendAveriado15me.setText(String.valueOf(averiado15me));
+        rendAveriado30.setText(String.valueOf(averiado30));
+        rendAveriado45.setText(String.valueOf(averiado45));
+
+        rendRetiro10.setText(String.valueOf(retiro10));
+        rendRetiro12.setText(String.valueOf(retiro12));
+        rendRetiro15.setText(String.valueOf(retiro15));
+        rendRetiro15me.setText(String.valueOf(retiro15me));
+        rendRetiro30.setText(String.valueOf(retiro30));
+        rendRetiro45.setText(String.valueOf(retiro45));
+
+        rendEntrega10.setText(String.valueOf(entrega10));
+        rendEntrega12.setText(String.valueOf(entrega12));
+        rendEntrega15.setText(String.valueOf(entrega15));
+        rendEntrega15me.setText(String.valueOf(entrega15me));
+        rendEntrega30.setText(String.valueOf(entrega30));
+        rendEntrega45.setText(String.valueOf(entrega45));
+
+        rendCambio10.setText(String.valueOf(cambio10));
+        rendCambio12.setText(String.valueOf(cambio12));
+        rendCambio15.setText(String.valueOf(cambio15));
+        rendCambio15me.setText(String.valueOf(cambio15me));
+        rendCambio30.setText(String.valueOf(cambio30));
+        rendCambio45.setText(String.valueOf(cambio45));
+    }
+
+    private void cargarVentasProducto(List<Movimiento> movimientos) {
+        Integer venta10 = 0;
+        Integer venta12 = 0;
+        Integer venta15 = 0;
+        Integer venta15me = 0;
+        Integer venta30 = 0;
+        Integer venta45 = 0;
+
+        for (Movimiento mov: movimientos) {
+            for (ItemMovimiento item: mov.getItems()) {
+                if (item.getEnvase().getId().equals(1L)) {
+                    venta10 = venta10 + item.getCantidad();
+                }
+
+                if (item.getEnvase().getId().equals(2L)) {
+                    venta12 = venta12 + item.getCantidad();
+                }
+
+                if (item.getEnvase().getId().equals(3L)) {
+                    venta15 = venta15 + item.getCantidad();
+                }
+
+                if (item.getEnvase().getId().equals(4L)) {
+                    venta15me = venta15me + item.getCantidad();
+                }
+
+                if (item.getEnvase().getId().equals(5L)) {
+                    venta30 = venta30 + item.getCantidad();
+                }
+
+                if (item.getEnvase().getId().equals(6L)) {
+                    venta45 = venta45 + item.getCantidad();
+                }
+            }
+        }
+
+        ventaProducto10.setText(String.valueOf(venta10));
+        ventaProducto12.setText(String.valueOf(venta12));
+        ventaProducto15.setText(String.valueOf(venta15));
+        ventaProducto15me.setText(String.valueOf(venta15me));
+        ventaProducto30.setText(String.valueOf(venta30));
+        ventaProducto45.setText(String.valueOf(venta45));
+    }
+
+    private void cargarVentasEnvases(List<Movimiento> movimientos) {
+        Integer venta10 = 0;
+        Integer venta12 = 0;
+        Integer venta15 = 0;
+        Integer venta15me = 0;
+        Integer venta30 = 0;
+        Integer venta45 = 0;
+
+        for (Movimiento mov: movimientos) {
+            for (ItemMovimiento item: mov.getItems()) {
+                if (item.getEnvase().getId().equals(7L) && item.getCantidad() > 0) {
+                    venta10 = venta10 + item.getCantidad();
+                }
+
+                if (item.getEnvase().getId().equals(8L) && item.getCantidad() > 0) {
+                    venta12 = venta12 + item.getCantidad();
+                }
+
+                if (item.getEnvase().getId().equals(9L) && item.getCantidad() > 0) {
+                    venta15 = venta15 + item.getCantidad();
+                }
+
+                if (item.getEnvase().getId().equals(10L) && item.getCantidad() > 0) {
+                    venta15me = venta15me + item.getCantidad();
+                }
+
+                if (item.getEnvase().getId().equals(11L) && item.getCantidad() > 0) {
+                    venta30 = venta30 + item.getCantidad();
+                }
+
+                if (item.getEnvase().getId().equals(12L) && item.getCantidad() > 0) {
+                    venta45 = venta45 + item.getCantidad();
+                }
+            }
+        }
+
+        ventaEnvase10.setText(String.valueOf(venta10));
+        ventaEnvase12.setText(String.valueOf(venta12));
+        ventaEnvase15.setText(String.valueOf(venta15));
+        ventaEnvase15me.setText(String.valueOf(venta15me));
+        ventaEnvase30.setText(String.valueOf(venta30));
+        ventaEnvase45.setText(String.valueOf(venta45));
+    }
+
+    private void cargarComprasEnvases(List<Movimiento> movimientos) {
+        Integer compra10 = 0;
+        Integer compra12 = 0;
+        Integer compra15 = 0;
+        Integer compra15me = 0;
+        Integer compra30 = 0;
+        Integer compra45 = 0;
+
+        for (Movimiento mov: movimientos) {
+            for (ItemMovimiento item: mov.getItems()) {
+                if (item.getEnvase().getId().equals(7L) && item.getCantidad() < 0) {
+                    compra10 = compra10 + (item.getCantidad() * -1);
+                }
+
+                if (item.getEnvase().getId().equals(8L) && item.getCantidad() < 0) {
+                    compra12 = compra12 + (item.getCantidad() * -1);
+                }
+
+                if (item.getEnvase().getId().equals(9L) && item.getCantidad() < 0) {
+                    compra15 = compra15 + (item.getCantidad() * -1);
+                }
+
+                if (item.getEnvase().getId().equals(10L) && item.getCantidad() < 0) {
+                    compra15me = compra15me + (item.getCantidad() * -1);
+                }
+
+                if (item.getEnvase().getId().equals(11L) && item.getCantidad() < 0) {
+                    compra30 = compra30 + (item.getCantidad() * -1);
+                }
+
+                if (item.getEnvase().getId().equals(12L) && item.getCantidad() < 0) {
+                    compra45 = compra45 + (item.getCantidad() * -1);
+                }
+            }
+        }
+
+        compraEnvase10.setText(String.valueOf(compra10));
+        compraEnvase12.setText(String.valueOf(compra12));
+        compraEnvase15.setText(String.valueOf(compra15));
+        compraEnvase15me.setText(String.valueOf(compra15me));
+        compraEnvase30.setText(String.valueOf(compra30));
+        compraEnvase45.setText(String.valueOf(compra45));
+    }
 
     private boolean controlarStock10() {
         boolean control = true;
@@ -947,14 +931,15 @@ public class FragmentCIERRE extends Fragment implements LoaderManager.LoaderCall
         if (controlarStock10() == false || controlarStock12() == false || controlarStock15() == false || controlarStock15me() == false || controlarStock30() == false || controlarStock45() == false) {
             Toast.makeText(getContext(), "Existen diferencias de stock.", Toast.LENGTH_LONG).show();
         } else {
-            new HttpAsyncTask().execute();
+            new PostCierreAsyncTask().execute();
         }
     }
 
     @Override
     public android.support.v4.content.Loader<List<Movimiento>> onCreateLoader(int i, Bundle bundle) {
-        return null;
-        //return new MovimientoLoader(getContext(), SERVICE_URL, hojaRutaId);
+        String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/movimiento/findByHojaRutaEstado/" + hojaRuta.getId() + "/3";
+
+        return new MovimientoLoader(getContext(), url);
     }
 
     @Override
@@ -981,9 +966,9 @@ public class FragmentCIERRE extends Fragment implements LoaderManager.LoaderCall
         Integer compraEnv45 = 0;
 
         if (movimientos != null && !movimientos.isEmpty()) {
-            //cargarVentasProducto(movimientos);
-            //cargarVentasEnvases(movimientos);
-            //cargarComprasEnvases(movimientos);
+            cargarVentasProducto(movimientos);
+            cargarVentasEnvases(movimientos);
+            cargarComprasEnvases(movimientos);
         } else {
             ventaProducto10.setText(String.valueOf(ventaPro10));
             ventaProducto12.setText(String.valueOf(ventaPro12));

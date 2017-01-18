@@ -87,9 +87,9 @@ public class FragmentREN2 extends Fragment {
         View rootView = inflater.inflate(R.layout.tipos_carga_ren2, container, false);
 
         hojaRuta = (HojaRuta) getArguments().getSerializable("hoja");
+        chofer = getArguments().getString("chofer");
 
         carga = (Carga) getArguments().getSerializable("cargaREN2");
-        chofer = getArguments().getString("chofer");
 
         choferNombre = (TextView) rootView.findViewById(R.id.nombrechofer);
         choferNombre.setText(chofer);
