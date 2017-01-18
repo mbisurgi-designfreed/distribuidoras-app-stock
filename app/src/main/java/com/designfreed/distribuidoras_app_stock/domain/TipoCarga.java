@@ -1,6 +1,8 @@
 package com.designfreed.distribuidoras_app_stock.domain;
 
-public class TipoCarga {
+import java.io.Serializable;
+
+public class TipoCarga implements Serializable {
     private Long id;
     private String tipoCargaNombre;
     private String sigla;

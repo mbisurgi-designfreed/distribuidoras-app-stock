@@ -1,6 +1,8 @@
 package com.designfreed.distribuidoras_app_stock.domain;
 
-public class Envase {
+import java.io.Serializable;
+
+public class Envase implements Serializable {
     private Long id;
     private Integer envaseCodigo;
     private String envaseNombre;

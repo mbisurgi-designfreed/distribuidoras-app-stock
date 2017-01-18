@@ -1,6 +1,8 @@
 package com.designfreed.distribuidoras_app_stock.domain;
 
-public class ItemCarga {
+import java.io.Serializable;
+
+public class ItemCarga implements Serializable {
     private Long id;
     private Envase envase;
     private Integer lleno;

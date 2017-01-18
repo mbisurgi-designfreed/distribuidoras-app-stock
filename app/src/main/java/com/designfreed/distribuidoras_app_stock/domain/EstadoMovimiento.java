@@ -1,6 +1,8 @@
 package com.designfreed.distribuidoras_app_stock.domain;
 
-public class EstadoMovimiento {
+import java.io.Serializable;
+
+public class EstadoMovimiento implements Serializable {
     private Long id;
     private String estadoMovimientoNombre;
 

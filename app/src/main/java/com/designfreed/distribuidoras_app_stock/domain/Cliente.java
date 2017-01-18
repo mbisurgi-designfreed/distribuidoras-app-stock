@@ -1,6 +1,8 @@
 package com.designfreed.distribuidoras_app_stock.domain;
 
-public class Cliente {
+import java.io.Serializable;
+
+public class Cliente implements Serializable {
     private Long id;
     private String razonSocial;
     private String calle;

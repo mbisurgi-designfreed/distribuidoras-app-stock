@@ -1,6 +1,8 @@
 package com.designfreed.distribuidoras_app_stock.domain;
 
-public class Chofer {
+import java.io.Serializable;
+
+public class Chofer implements Serializable{
     private Long id;
     private String nombre;
     private String apellido;

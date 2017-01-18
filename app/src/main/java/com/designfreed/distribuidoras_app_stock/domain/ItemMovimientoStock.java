@@ -1,6 +1,8 @@
 package com.designfreed.distribuidoras_app_stock.domain;
 
-public class ItemMovimientoStock {
+import java.io.Serializable;
+
+public class ItemMovimientoStock implements Serializable {
     private Long id;
     private Envase envase;
     private EstadoEnvase estadoEnvase;

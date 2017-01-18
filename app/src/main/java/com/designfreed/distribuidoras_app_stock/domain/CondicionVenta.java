@@ -1,6 +1,8 @@
 package com.designfreed.distribuidoras_app_stock.domain;
 
-public class CondicionVenta {
+import java.io.Serializable;
+
+public class CondicionVenta implements Serializable {
     private Long id;
     private String condicionVentaNombre;
 
