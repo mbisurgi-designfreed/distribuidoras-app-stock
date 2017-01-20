@@ -7,6 +7,7 @@ public class Chofer implements Serializable{
     private String nombre;
     private String apellido;
     private String dni;
+    private String password;
 
     public Chofer() {
     }
@@ -41,6 +42,14 @@ public class Chofer implements Serializable{
 
     public void setDni(String dni) {
         this.dni = dni;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

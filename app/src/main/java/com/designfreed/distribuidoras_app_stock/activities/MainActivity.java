@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,8 +22,6 @@ import com.designfreed.distribuidoras_app_stock.converters.DateConverter;
 import com.designfreed.distribuidoras_app_stock.domain.HojaRuta;
 import com.designfreed.distribuidoras_app_stock.loaders.HojaRutaLoader;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -91,18 +89,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public Loader<List<HojaRuta>> onCreateLoader(int id, Bundle args) {
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-
-        Date date = null;
-
-        try {
-            date = format.parse("22/06/2016");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        Long fecha = new DateConverter().dateToLong(date);
-        //Long fecha = new DateConverter().dateToLong(new Date());
+        Long fecha = new DateConverter().dateToLong(new Date());
 
         String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/hojaRuta/findByFecha/" + fecha;
 
