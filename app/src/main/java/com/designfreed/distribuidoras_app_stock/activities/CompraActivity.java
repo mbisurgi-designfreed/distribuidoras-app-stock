@@ -113,10 +113,22 @@ public class CompraActivity extends AppCompatActivity {
 
                 movimiento.setFecha(new DateConverter().stringToDate(txtFecha.getText().toString()));
                 movimiento.setHojaRuta(null);
-                movimiento.setTipoMovimiento("Compra");
+                movimiento.setTipoMovimiento("Compra Producto");
                 movimiento.setModulo("Stock");
                 movimiento.setNroComprobante(txtNroComprobante.getText().toString());
-                movimiento.setItems(items);
+                for (ItemMovimientoStock itemLleno: items) {
+                    movimiento.getItems().add(itemLleno);
+
+                    ItemMovimientoStock itemVacio = new ItemMovimientoStock();
+
+                    itemVacio.setEnvase(itemLleno.getEnvase());
+                    itemVacio.setEstadoEnvase(estadosEnvase.get(1));
+                    itemVacio.setCantidad(itemLleno.getCantidad() * -1);
+                    itemVacio.setCosto(itemLleno.getCosto());
+                    itemVacio.setComodatoGenerado(false);
+
+                    movimiento.getItems().add(itemVacio);
+                }
 
                 new PostCompraTask().execute(movimiento);
             }
