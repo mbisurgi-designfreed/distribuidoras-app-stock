@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.designfreed.distribuidoras_app_stock.R;
+import com.designfreed.distribuidoras_app_stock.constants.Constants;
 import com.designfreed.distribuidoras_app_stock.domain.Carga;
 import com.designfreed.distribuidoras_app_stock.domain.HojaRuta;
 import com.designfreed.distribuidoras_app_stock.loaders.CargaLoader;
@@ -19,7 +20,6 @@ import com.designfreed.distribuidoras_app_stock.pagers.CargaPagerAdapter;
 import java.util.List;
 
 public class CargaActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Carga>> {
-    private static final String SERVICE_URL = "http://bybgas.dyndns.org:8080/StockService/services/stockService/getCargaByHojaRuta?";
     private HojaRuta hojaRuta;
     private String chofer;
 
@@ -43,7 +43,7 @@ public class CargaActivity extends AppCompatActivity implements LoaderManager.Lo
 
     @Override
     public Loader<List<Carga>> onCreateLoader(int i, Bundle bundle) {
-        String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/carga/findByHojaRuta/" + hojaRuta.getId();
+        String url = Constants.SERVER + "distribuidoras-backend/carga/findByHojaRuta/" + hojaRuta.getId();
 
         return new CargaLoader(this, url);
     }

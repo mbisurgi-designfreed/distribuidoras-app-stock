@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.designfreed.distribuidoras_app_stock.R;
 import com.designfreed.distribuidoras_app_stock.adapters.CompraAdapter;
+import com.designfreed.distribuidoras_app_stock.constants.Constants;
 import com.designfreed.distribuidoras_app_stock.converters.DateConverter;
 import com.designfreed.distribuidoras_app_stock.dialogs.DateDialog;
 import com.designfreed.distribuidoras_app_stock.domain.Envase;
@@ -148,7 +149,7 @@ public class CompraActivity extends AppCompatActivity {
     private class LoadEnvasesTask extends AsyncTask<Void, Void, List<Envase>> {
         @Override
         protected List<Envase> doInBackground(Void... params) {
-            String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/envase/list";
+            String url = Constants.SERVER + "distribuidoras-backend/envase/list";
 
             try {
                 RestTemplate restTemplate = new RestTemplate();
@@ -176,7 +177,7 @@ public class CompraActivity extends AppCompatActivity {
     private class LoadEstadosEnvaseTask extends AsyncTask<Void, Void, List<EstadoEnvase>> {
         @Override
         protected List<EstadoEnvase> doInBackground(Void... params) {
-            String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/estadoEnvase/list";
+            String url = Constants.SERVER + "distribuidoras-backend/estadoEnvase/list";
 
             try {
                 RestTemplate restTemplate = new RestTemplate();
@@ -201,7 +202,7 @@ public class CompraActivity extends AppCompatActivity {
     private class PostCompraTask extends AsyncTask<MovimientoStock, Void, Boolean> {
         @Override
         protected Boolean doInBackground(MovimientoStock... params) {
-            String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/movimientoStock/add";
+            String url = Constants.SERVER + "distribuidoras-backend/movimientoStock/add";
 
             MovimientoStock movimiento = params[0];
 

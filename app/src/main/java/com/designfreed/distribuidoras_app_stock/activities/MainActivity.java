@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.designfreed.distribuidoras_app_stock.R;
 import com.designfreed.distribuidoras_app_stock.adapters.HojaRutaAdapter;
+import com.designfreed.distribuidoras_app_stock.constants.Constants;
 import com.designfreed.distribuidoras_app_stock.converters.DateConverter;
 import com.designfreed.distribuidoras_app_stock.domain.HojaRuta;
 import com.designfreed.distribuidoras_app_stock.loaders.HojaRutaLoader;
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public Loader<List<HojaRuta>> onCreateLoader(int id, Bundle args) {
         Long fecha = new DateConverter().dateToLong(new Date());
 
-        String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/hojaRuta/findByFecha/" + fecha;
+        String url = Constants.SERVER + "distribuidoras-backend/hojaRuta/findByFecha/" + fecha;
 
         return new HojaRutaLoader(this, url);
     }

@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.designfreed.distribuidoras_app_stock.R;
 import com.designfreed.distribuidoras_app_stock.activities.MainActivity;
+import com.designfreed.distribuidoras_app_stock.constants.Constants;
 import com.designfreed.distribuidoras_app_stock.domain.Carga;
 import com.designfreed.distribuidoras_app_stock.domain.HojaRuta;
 import com.designfreed.distribuidoras_app_stock.domain.ItemCarga;
@@ -37,7 +38,6 @@ import java.net.URL;
 import java.util.List;
 
 public class FragmentCIERRE extends Fragment implements LoaderManager.LoaderCallbacks<List<Movimiento>> {
-    private static final String SERVICE_URL = "http://bybgas.dyndns.org:8080/StockService/services/stockService/getMovimientoByHojaRuta?";
     private TextView inicLleno10;
     private TextView inicLleno12;
     private TextView inicLleno15;
@@ -253,7 +253,7 @@ public class FragmentCIERRE extends Fragment implements LoaderManager.LoaderCall
     private class PostCierreAsyncTask extends AsyncTask<HojaRuta, Void, Boolean> {
         @Override
         protected Boolean doInBackground(HojaRuta... params) {
-            String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/hojaRuta/update";
+            String url = Constants.SERVER + "distribuidoras-backend/hojaRuta/update";
 
             try {
                 RestTemplate restTemplate = new RestTemplate();
@@ -937,7 +937,7 @@ public class FragmentCIERRE extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public android.support.v4.content.Loader<List<Movimiento>> onCreateLoader(int i, Bundle bundle) {
-        String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/movimiento/findByHojaRutaEstado/" + hojaRuta.getId() + "/3";
+        String url = Constants.SERVER + "distribuidoras-backend/movimiento/findByHojaRutaEstado/" + hojaRuta.getId() + "/3";
 
         return new MovimientoLoader(getContext(), url);
     }

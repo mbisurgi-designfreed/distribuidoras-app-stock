@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.designfreed.distribuidoras_app_stock.R;
 import com.designfreed.distribuidoras_app_stock.activities.CargaActivity;
+import com.designfreed.distribuidoras_app_stock.constants.Constants;
 import com.designfreed.distribuidoras_app_stock.domain.Carga;
 import com.designfreed.distribuidoras_app_stock.domain.Envase;
 import com.designfreed.distribuidoras_app_stock.domain.HojaRuta;
@@ -31,7 +32,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class FragmentREPO extends Fragment {
-    private static final String SERVICE_URL = "http://bybgas.dyndns.org:8080/StockService/services/stockService/getCargaByHojaRuta?";
     private static final Long REPO = 2L;
     private EditText lleno10;
     private EditText lleno12;
@@ -222,7 +222,7 @@ public class FragmentREPO extends Fragment {
     private class LoadEnvasesTask extends AsyncTask<Void, Void, List<Envase>> {
         @Override
         protected List<Envase> doInBackground(Void... params) {
-            String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/envase/list";
+            String url = Constants.SERVER + "distribuidoras-backend/envase/list";
 
             try {
                 RestTemplate restTemplate = new RestTemplate();
@@ -247,7 +247,7 @@ public class FragmentREPO extends Fragment {
     private class LoadTiposCargaTask extends AsyncTask<Void, Void, List<TipoCarga>> {
         @Override
         protected List<TipoCarga> doInBackground(Void... params) {
-            String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/tipoCarga/list";
+            String url = Constants.SERVER + "distribuidoras-backend/tipoCarga/list";
 
             try {
                 RestTemplate restTemplate = new RestTemplate();
@@ -272,7 +272,7 @@ public class FragmentREPO extends Fragment {
     private class PostReposicionAsyncTask extends AsyncTask<Carga, Void, Boolean> {
         @Override
         protected Boolean doInBackground(Carga... params) {
-            String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/carga/add";
+            String url = Constants.SERVER + "distribuidoras-backend/carga/add";
 
             carga = crearCarga(carga);
 
@@ -289,7 +289,7 @@ public class FragmentREPO extends Fragment {
         private class LoadEnvasesTask extends AsyncTask<Void, Void, List<Envase>> {
             @Override
             protected List<Envase> doInBackground(Void... params) {
-                String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/envase/list";
+                String url = Constants.SERVER + "distribuidoras-backend/envase/list";
 
                 try {
                     RestTemplate restTemplate = new RestTemplate();
@@ -314,7 +314,7 @@ public class FragmentREPO extends Fragment {
         private class LoadTiposCargaTask extends AsyncTask<Void, Void, List<TipoCarga>> {
             @Override
             protected List<TipoCarga> doInBackground(Void... params) {
-                String url = "http://bybgas.dyndns.org:8080/distribuidoras-backend/tipoCarga/list";
+                String url = Constants.SERVER + "distribuidoras-backend/tipoCarga/list";
 
                 try {
                     RestTemplate restTemplate = new RestTemplate();
