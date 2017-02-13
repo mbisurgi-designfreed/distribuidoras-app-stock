@@ -92,7 +92,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public Loader<List<HojaRuta>> onCreateLoader(int id, Bundle args) {
         Long fecha = new DateConverter().dateToLong(new Date());
 
-        String url = Constants.SERVER + "distribuidoras-backend/hojaRuta/findByFecha/" + fecha;
+        String url = Constants.SERVER +
+                "distribuidoras-backend/hojaRuta/findByFecha/" + fecha;
 
         return new HojaRutaLoader(this, url);
     }

@@ -255,9 +255,12 @@ public class FragmentCIERRE extends Fragment implements LoaderManager.LoaderCall
         protected Boolean doInBackground(HojaRuta... params) {
             String url = Constants.SERVER + "distribuidoras-backend/hojaRuta/update";
 
+            HojaRuta hojaRutaCerrada = hojaRuta;
+            hojaRutaCerrada.setControlStock(true);
+
             try {
                 RestTemplate restTemplate = new RestTemplate();
-                ResponseEntity<HojaRuta> response = restTemplate.postForEntity(url, hojaRuta, HojaRuta.class);
+                ResponseEntity<HojaRuta> response = restTemplate.postForEntity(url, hojaRutaCerrada, HojaRuta.class);
 
                 return  (response.getStatusCode() == HttpStatus.OK);
             } catch (ResourceAccessException connectException) {
